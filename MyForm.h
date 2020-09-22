@@ -1,5 +1,6 @@
 #pragma once
 #include <math.h>
+#include "numerical_methods.h"
 
 namespace Graph {
 
@@ -53,6 +54,8 @@ namespace Graph {
 	private: System::Windows::Forms::Label^  label4;
 	private: System::Windows::Forms::TextBox^  textBox5;
 	private: System::Windows::Forms::Label^  label5;
+	private: System::Windows::Forms::Label^ label6;
+	private: System::Windows::Forms::TextBox^ textBox6;
 
 
 
@@ -91,6 +94,8 @@ namespace Graph {
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->textBox5 = (gcnew System::Windows::Forms::TextBox());
 			this->label5 = (gcnew System::Windows::Forms::Label());
+			this->label6 = (gcnew System::Windows::Forms::Label());
+			this->textBox6 = (gcnew System::Windows::Forms::TextBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -246,6 +251,25 @@ namespace Graph {
 			this->label5->TabIndex = 10;
 			this->label5->Text = L"a";
 			// 
+			// label6
+			// 
+			this->label6->AutoSize = true;
+			this->label6->Location = System::Drawing::Point(419, 394);
+			this->label6->Name = L"label6";
+			this->label6->Size = System::Drawing::Size(18, 13);
+			this->label6->TabIndex = 5;
+			this->label6->Text = L"y0";
+			this->label6->Click += gcnew System::EventHandler(this, &MyForm::label6_Click);
+			// 
+			// textBox6
+			// 
+			this->textBox6->Location = System::Drawing::Point(438, 391);
+			this->textBox6->Name = L"textBox6";
+			this->textBox6->Size = System::Drawing::Size(49, 20);
+			this->textBox6->TabIndex = 6;
+			this->textBox6->Text = L"5";
+			this->textBox6->TextChanged += gcnew System::EventHandler(this, &MyForm::textBox6_TextChanged);
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -258,6 +282,8 @@ namespace Graph {
 			this->Controls->Add(this->button2);
 			this->Controls->Add(this->textBox3);
 			this->Controls->Add(this->label3);
+			this->Controls->Add(this->textBox6);
+			this->Controls->Add(this->label6);
 			this->Controls->Add(this->textBox2);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->textBox1);
@@ -274,9 +300,6 @@ namespace Graph {
 		}
 #pragma endregion
 	private: 
-		double f_derivated(double x, double y) {
-			return -3.5 * y;
-		}
 
 		double f1(double x){
 			return -4.5*x;
@@ -291,8 +314,6 @@ namespace Graph {
 		GraphPane^ panel = zedGraphControl1->GraphPane;
 		panel->CurveList->Clear();
 		PointPairList^ f1_list = gcnew ZedGraph::PointPairList();
-		PointPairList^ f2_list = gcnew ZedGraph::PointPairList();
-		PointPairList^ f3_list = gcnew ZedGraph::PointPairList();
 
 		// Интервал, где есть данные
 		double xmin = Convert::ToDouble(textBox1->Text);
@@ -307,44 +328,28 @@ namespace Graph {
 		double ymin_limit = -1.0;
 		double ymax_limit = 100.0;
 */
+		double y0 = Convert::ToDouble(textBox6->Text);
 		// Список точек
 		int i = 0;
 		dataGridView1->Rows->Clear();
-		for (double x = xmin; x <= xmax; x += h)
+		
+		auto ans=RungeKutta4_wo_control(f_derivated, xmin, xmax, y0, h);
+		for (;i<ans.size();)
 		{
-			//Добавление на график
-			f1_list->Add(x, f1(x));
-			f2_list->Add(x, f2(x));
-			//Печать в таблицу
-			dataGridView1->Rows->Add();
-			dataGridView1->Rows[i]->Cells[0]->Value = x; 			
-			dataGridView1->Rows[i]->Cells[1]->Value = floor(f1(x) * 1000) / 1000;
-			dataGridView1->Rows[i]->Cells[2]->Value = floor(f2(x) * 1000) / 1000;
-			i++;
-		}
-		LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red,SymbolType::Plus);
-		LineItem Curve2 = panel->AddCurve("F2(x)", f2_list, Color::Blue, SymbolType::None);
-
-		double y = 1;
-		for (double x = xmin; x <= xmax; x += h)
-		{
-			//Добавление на график
-			double k1 = f_derivated(x, y);
-			double k2 = f_derivated(x + h/2, y + h/2*k1);
-			double k3 = f_derivated(x + h/2, y + h / 2 * k2);
-			double k4 = f_derivated(x + h, y + h * k3);
-
-			f3_list->Add(x, y + h/6*(k1 + 2 * k2 + 2 * k3 + k4));
 			
+			//Добавление на график
+			f1_list->Add(ans[i].first, ans[i].second);
 			//Печать в таблицу
 			dataGridView1->Rows->Add();
-			dataGridView1->Rows[i]->Cells[0]->Value = x;
-			dataGridView1->Rows[i]->Cells[1]->Value = floor((y + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4)) * 1000) / 1000;
-			y += h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+			dataGridView1->Rows[i]->Cells[0]->Value = ans[i].first;
+			dataGridView1->Rows[i]->Cells[1]->Value = floor(ans[i].second * 1000) / 1000;
 			i++;
 		}
+		LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red,SymbolType::None);
+		
 
-		LineItem Curve3 = panel->AddCurve("F3(x)", f3_list, Color::Green, SymbolType::None);
+
+		
 
 		// Устанавливаем интересующий нас интервал по оси X
 		panel->XAxis->Scale->Min = xmin_limit;
@@ -370,6 +375,7 @@ private: System::Void button2_Click(System::Object^  sender, System::EventArgs^ 
 	GraphPane^ panel = zedGraphControl1->GraphPane;
 	double xmin = Convert::ToDouble(textBox5->Text);
 	double xmax = Convert::ToDouble(textBox4->Text);
+	
 	// Устанавливаем интересующий нас интервал по оси X
 	panel->XAxis->Scale->Min = xmin;
 	panel->XAxis->Scale->Max = xmax;
@@ -381,6 +387,10 @@ private: System::Void button2_Click(System::Object^  sender, System::EventArgs^ 
 	// Обновляем график
 	zedGraphControl1->Invalidate();
 
+}
+private: System::Void label6_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void textBox6_TextChanged(System::Object^ sender, System::EventArgs^ e) {
 }
 };
 }
