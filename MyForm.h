@@ -274,8 +274,12 @@ namespace Graph {
 		}
 #pragma endregion
 	private: 
+		double f_derivated(double x, double y) {
+			return -3.5 * y;
+		}
+
 		double f1(double x){
-			return sin(x);
+			return -4.5*x;
 		}
 
 		double f2(double x) {
@@ -288,6 +292,7 @@ namespace Graph {
 		panel->CurveList->Clear();
 		PointPairList^ f1_list = gcnew ZedGraph::PointPairList();
 		PointPairList^ f2_list = gcnew ZedGraph::PointPairList();
+		PointPairList^ f3_list = gcnew ZedGraph::PointPairList();
 
 		// Интервал, где есть данные
 		double xmin = Convert::ToDouble(textBox1->Text);
@@ -319,6 +324,27 @@ namespace Graph {
 		}
 		LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red,SymbolType::Plus);
 		LineItem Curve2 = panel->AddCurve("F2(x)", f2_list, Color::Blue, SymbolType::None);
+
+		double y = 1;
+		for (double x = xmin; x <= xmax; x += h)
+		{
+			//Добавление на график
+			double k1 = f_derivated(x, y);
+			double k2 = f_derivated(x + h/2, y + h/2*k1);
+			double k3 = f_derivated(x + h/2, y + h / 2 * k2);
+			double k4 = f_derivated(x + h, y + h * k3);
+
+			f3_list->Add(x, y + h/6*(k1 + 2 * k2 + 2 * k3 + k4));
+			
+			//Печать в таблицу
+			dataGridView1->Rows->Add();
+			dataGridView1->Rows[i]->Cells[0]->Value = x;
+			dataGridView1->Rows[i]->Cells[1]->Value = floor((y + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4)) * 1000) / 1000;
+			y += h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+			i++;
+		}
+
+		LineItem Curve3 = panel->AddCurve("F3(x)", f3_list, Color::Green, SymbolType::None);
 
 		// Устанавливаем интересующий нас интервал по оси X
 		panel->XAxis->Scale->Min = xmin_limit;
