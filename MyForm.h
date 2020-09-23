@@ -56,6 +56,9 @@ namespace Graph {
 	private: System::Windows::Forms::Label^  label5;
 	private: System::Windows::Forms::Label^ label6;
 	private: System::Windows::Forms::TextBox^ textBox6;
+	private: System::Windows::Forms::TextBox^ textBox7;
+	private: System::Windows::Forms::Label^ label7;
+	private: System::Windows::Forms::CheckBox^ checkBox1;
 
 
 
@@ -96,6 +99,9 @@ namespace Graph {
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->label6 = (gcnew System::Windows::Forms::Label());
 			this->textBox6 = (gcnew System::Windows::Forms::TextBox());
+			this->textBox7 = (gcnew System::Windows::Forms::TextBox());
+			this->label7 = (gcnew System::Windows::Forms::Label());
+			this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -116,7 +122,7 @@ namespace Graph {
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(633, 386);
+			this->button1->Location = System::Drawing::Point(710, 386);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(142, 29);
 			this->button1->TabIndex = 1;
@@ -131,7 +137,7 @@ namespace Graph {
 				this->X, this->F_1,
 					this->F_2
 			});
-			this->dataGridView1->Location = System::Drawing::Point(559, 30);
+			this->dataGridView1->Location = System::Drawing::Point(636, 30);
 			this->dataGridView1->Name = L"dataGridView1";
 			this->dataGridView1->RowHeadersVisible = false;
 			this->dataGridView1->Size = System::Drawing::Size(274, 327);
@@ -193,7 +199,7 @@ namespace Graph {
 			// label3
 			// 
 			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(287, 398);
+			this->label3->Location = System::Drawing::Point(265, 397);
 			this->label3->Name = L"label3";
 			this->label3->Size = System::Drawing::Size(13, 13);
 			this->label3->TabIndex = 7;
@@ -201,7 +207,7 @@ namespace Graph {
 			// 
 			// textBox3
 			// 
-			this->textBox3->Location = System::Drawing::Point(306, 394);
+			this->textBox3->Location = System::Drawing::Point(284, 393);
 			this->textBox3->Name = L"textBox3";
 			this->textBox3->Size = System::Drawing::Size(61, 20);
 			this->textBox3->TabIndex = 8;
@@ -209,7 +215,7 @@ namespace Graph {
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(633, 437);
+			this->button2->Location = System::Drawing::Point(710, 437);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(142, 29);
 			this->button2->TabIndex = 9;
@@ -254,7 +260,7 @@ namespace Graph {
 			// label6
 			// 
 			this->label6->AutoSize = true;
-			this->label6->Location = System::Drawing::Point(419, 394);
+			this->label6->Location = System::Drawing::Point(373, 397);
 			this->label6->Name = L"label6";
 			this->label6->Size = System::Drawing::Size(18, 13);
 			this->label6->TabIndex = 5;
@@ -263,18 +269,49 @@ namespace Graph {
 			// 
 			// textBox6
 			// 
-			this->textBox6->Location = System::Drawing::Point(438, 391);
+			this->textBox6->Location = System::Drawing::Point(392, 394);
 			this->textBox6->Name = L"textBox6";
 			this->textBox6->Size = System::Drawing::Size(49, 20);
 			this->textBox6->TabIndex = 6;
 			this->textBox6->Text = L"5";
 			this->textBox6->TextChanged += gcnew System::EventHandler(this, &MyForm::textBox6_TextChanged);
 			// 
+			// textBox7
+			// 
+			this->textBox7->Location = System::Drawing::Point(591, 391);
+			this->textBox7->Name = L"textBox7";
+			this->textBox7->Size = System::Drawing::Size(61, 20);
+			this->textBox7->TabIndex = 15;
+			this->textBox7->Text = L"0,1";
+			// 
+			// label7
+			// 
+			this->label7->AutoSize = true;
+			this->label7->Location = System::Drawing::Point(561, 395);
+			this->label7->Name = L"label7";
+			this->label7->Size = System::Drawing::Size(24, 13);
+			this->label7->TabIndex = 14;
+			this->label7->Text = L"eps";
+			// 
+			// checkBox1
+			// 
+			this->checkBox1->AutoSize = true;
+			this->checkBox1->BackColor = System::Drawing::SystemColors::Control;
+			this->checkBox1->Location = System::Drawing::Point(480, 395);
+			this->checkBox1->Name = L"checkBox1";
+			this->checkBox1->Size = System::Drawing::Size(59, 17);
+			this->checkBox1->TabIndex = 16;
+			this->checkBox1->Text = L"Control";
+			this->checkBox1->UseVisualStyleBackColor = false;
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(858, 497);
+			this->ClientSize = System::Drawing::Size(922, 497);
+			this->Controls->Add(this->checkBox1);
+			this->Controls->Add(this->textBox7);
+			this->Controls->Add(this->label7);
 			this->Controls->Add(this->textBox4);
 			this->Controls->Add(this->label4);
 			this->Controls->Add(this->textBox5);
@@ -320,7 +357,8 @@ namespace Graph {
 		double xmax = Convert::ToDouble(textBox2->Text);
 
 		double h = Convert::ToDouble(textBox3->Text);
-
+		bool control = checkBox1->Checked;
+		double eps = Convert::ToDouble(textBox7->Text);
 
 		double xmin_limit = xmin - 0.1;
 		double xmax_limit = xmax + 0.1;
@@ -333,7 +371,7 @@ namespace Graph {
 		int i = 0;
 		dataGridView1->Rows->Clear();
 		
-		auto ans=RungeKutta4_wo_control(f_derivated, xmin, xmax, y0, h);
+		auto ans=RungeKutta4(f_derivated, xmin, xmax, y0, h,control, eps);
 		for (;i<ans.size();)
 		{
 			
