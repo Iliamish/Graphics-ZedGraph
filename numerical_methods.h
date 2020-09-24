@@ -4,8 +4,16 @@
 
 // Оформление здесь довольно экспериментальное. Заранее извините
 
-double f_derivated(double x, double y) {
+double f_test(double x, double y) { // Тестовая задача
 	return -3.5 * y;
+}
+
+double test_sol(double x, double y0) { // Решение тестовой задачи при x0=0, y0
+	return y0*exp(-3.5 * x);
+}
+
+double f1(double x, double y) { // Задача 1
+	return (1.0/(1+3.0*x+x*x))*(y*y)+y-pow(y,3)*sin(10*x); //ПРОВЕРИТЬ
 }
 
 std::pair<double, double> RK4_new_point(
@@ -30,19 +38,22 @@ std::vector<std::pair<double, double> > RungeKutta4 //Метод РГ 4 порядка
 	double y0, //Начальные условия
 	double h=0.001, //Шаг интегрирования
 	bool control=false, //Контроль погрешности
-	double eps=0.000001 //Точность контроля погрешности
+	double eps=0.000001, //Точность контроля погрешности
+	unsigned int NMax=50000 //Максимальное число итераций. Только для версии с переменным шагом.
 )
 {
 	std::vector<std::pair<double, double> > ans;
 	double x = xmin, y=y0;
 	ans.push_back(std::make_pair(x, y));
-	for (; x <= xmax-h; ) { //Если до границы осталось меньше h, то b не используется. FIXED
+	unsigned int i = 0;
+	for (; x <= xmax-h; ) { //Если до границы осталось меньше h, то b не используется. FIXED (А надо ли?)
 		if (!control) {
 			auto tmp = RK4_new_point(f, x, y, h);
 			x = tmp.first; y = tmp.second;
 			ans.push_back(tmp);
 		}
 		else {
+			if (i++ >= NMax) return ans; //Контроль итераций
 			auto p1 = RK4_new_point(f, x, y, h);
 			auto p12 = RK4_new_point(f, x, y, h / 2.0);
 			auto p2 = RK4_new_point(f, p12.first, p12.second, h / 2.0);
@@ -56,7 +67,8 @@ std::vector<std::pair<double, double> > RungeKutta4 //Метод РГ 4 порядка
 		}
 		
 	}
-	if (x + h > xmax) {
+	//Возможно то, что написано ниже является бредом. Относитесь со скептисом.
+	/*if (x + h > xmax) {
 		h = xmax - x;
 		if (!control) {
 			auto tmp = RK4_new_point(f, x, y, h);
@@ -65,6 +77,7 @@ std::vector<std::pair<double, double> > RungeKutta4 //Метод РГ 4 порядка
 		}
 		else {
 			double s;
+			if (i++ > NMax) return ans;
 			do {
 				auto p1 = RK4_new_point(f, x, y, h);
 				auto p12 = RK4_new_point(f, x, y, h / 2.0);
@@ -78,7 +91,7 @@ std::vector<std::pair<double, double> > RungeKutta4 //Метод РГ 4 порядка
 			} while (s > eps);
 	
 		}
-	}
+	}*/
 
 	return ans;
 }

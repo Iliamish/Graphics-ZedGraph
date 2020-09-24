@@ -59,6 +59,9 @@ namespace Graph {
 	private: System::Windows::Forms::TextBox^ textBox7;
 	private: System::Windows::Forms::Label^ label7;
 	private: System::Windows::Forms::CheckBox^ checkBox1;
+	private: System::Windows::Forms::RadioButton^ radioButton1;
+	private: System::Windows::Forms::RadioButton^ radioButton2;
+	private: System::Windows::Forms::RadioButton^ radioButton3;
 
 
 
@@ -102,6 +105,9 @@ namespace Graph {
 			this->textBox7 = (gcnew System::Windows::Forms::TextBox());
 			this->label7 = (gcnew System::Windows::Forms::Label());
 			this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
+			this->radioButton1 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButton2 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButton3 = (gcnew System::Windows::Forms::RadioButton());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -304,11 +310,50 @@ namespace Graph {
 			this->checkBox1->Text = L"Control";
 			this->checkBox1->UseVisualStyleBackColor = false;
 			// 
+			// radioButton1
+			// 
+			this->radioButton1->AutoSize = true;
+			this->radioButton1->Location = System::Drawing::Point(38, 7);
+			this->radioButton1->Name = L"radioButton1";
+			this->radioButton1->Size = System::Drawing::Size(111, 17);
+			this->radioButton1->TabIndex = 17;
+			this->radioButton1->TabStop = true;
+			this->radioButton1->Text = L"Тестовая задача";
+			this->radioButton1->UseVisualStyleBackColor = true;
+			this->radioButton1->CheckedChanged += gcnew System::EventHandler(this, &MyForm::radioButton1_CheckedChanged);
+			// 
+			// radioButton2
+			// 
+			this->radioButton2->AutoSize = true;
+			this->radioButton2->Location = System::Drawing::Point(155, 7);
+			this->radioButton2->Name = L"radioButton2";
+			this->radioButton2->Size = System::Drawing::Size(70, 17);
+			this->radioButton2->TabIndex = 17;
+			this->radioButton2->TabStop = true;
+			this->radioButton2->Text = L"Задача 1";
+			this->radioButton2->UseVisualStyleBackColor = true;
+			this->radioButton2->CheckedChanged += gcnew System::EventHandler(this, &MyForm::radioButton2_CheckedChanged);
+			// 
+			// radioButton3
+			// 
+			this->radioButton3->AutoSize = true;
+			this->radioButton3->Location = System::Drawing::Point(246, 7);
+			this->radioButton3->Name = L"radioButton3";
+			this->radioButton3->Size = System::Drawing::Size(70, 17);
+			this->radioButton3->TabIndex = 17;
+			this->radioButton3->TabStop = true;
+			this->radioButton3->Text = L"Задача 2";
+			this->radioButton3->UseVisualStyleBackColor = true;
+			this->radioButton3->CheckedChanged += gcnew System::EventHandler(this, &MyForm::radioButton3_CheckedChanged);
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(922, 497);
+			this->Controls->Add(this->radioButton3);
+			this->Controls->Add(this->radioButton2);
+			this->Controls->Add(this->radioButton1);
 			this->Controls->Add(this->checkBox1);
 			this->Controls->Add(this->textBox7);
 			this->Controls->Add(this->label7);
@@ -338,19 +383,22 @@ namespace Graph {
 #pragma endregion
 	private: 
 
-		double f1(double x){
-			return -4.5*x;
-		}
+		//double f1(double x){
+		//	return -4.5*x;
+		//}
 
-		double f2(double x) {
-			return sin(2 * x);
-		}
+		//double f2(double x) {
+		//	return sin(2 * x);
+		//}
 
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 
 		GraphPane^ panel = zedGraphControl1->GraphPane;
 		panel->CurveList->Clear();
 		PointPairList^ f1_list = gcnew ZedGraph::PointPairList();
+
+		//Только для тестовой задачи
+		PointPairList^ f2_list = gcnew ZedGraph::PointPairList();
 
 		// Интервал, где есть данные
 		double xmin = Convert::ToDouble(textBox1->Text);
@@ -371,19 +419,24 @@ namespace Graph {
 		int i = 0;
 		dataGridView1->Rows->Clear();
 		
-		auto ans=RungeKutta4(f_derivated, xmin, xmax, y0, h,control, eps);
+		auto ans=RungeKutta4(f1, xmin, xmax, y0, h,control, eps);
 		for (;i<ans.size();)
 		{
 			
 			//Добавление на график
 			f1_list->Add(ans[i].first, ans[i].second);
+			//f2_list->Add(ans[i].first, test_sol(ans[i].first, y0));
+
 			//Печать в таблицу
 			dataGridView1->Rows->Add();
 			dataGridView1->Rows[i]->Cells[0]->Value = ans[i].first;
 			dataGridView1->Rows[i]->Cells[1]->Value = floor(ans[i].second * 1000) / 1000;
+			//dataGridView1->Rows[i]->Cells[2]->Value = floor(test_sol(ans[i].first, y0) * 1000) / 1000;
+
 			i++;
 		}
 		LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red,SymbolType::None);
+		//LineItem Curve2 = panel->AddCurve("F2(x)", f2_list, Color::Green, SymbolType::Plus);
 		
 
 
@@ -429,6 +482,13 @@ private: System::Void button2_Click(System::Object^  sender, System::EventArgs^ 
 private: System::Void label6_Click(System::Object^ sender, System::EventArgs^ e) {
 }
 private: System::Void textBox6_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void radioButton1_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+
+}
+private: System::Void radioButton3_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void radioButton2_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
 }
 };
 }
