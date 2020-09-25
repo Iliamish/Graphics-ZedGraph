@@ -56,8 +56,8 @@ std::vector<std::pair<double, double> > RungeKutta4 //Метод РГ 4 порядка
 			if (i++ >= NMax) return ans; //Контроль итераций
 			auto p1 = RK4_new_point(f, x, y, h);
 			auto p12 = RK4_new_point(f, x, y, h / 2.0);
-			auto p2 = RK4_new_point(f, p12.first, p12.second, h / 2.0);
-			double s = (p2.second - p1.second) / (15.0);
+			auto p2 = RK4_new_point(f, p12.first, p12.second, h / 2);
+			double s = (p2.second - p1.second) / 15;
 			if (s > eps) h = h / 2;
 			else {
 				x = p1.first; y = p1.second;

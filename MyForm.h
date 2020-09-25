@@ -419,24 +419,24 @@ namespace Graph {
 		int i = 0;
 		dataGridView1->Rows->Clear();
 		
-		auto ans=RungeKutta4(f1, xmin, xmax, y0, h,control, eps);
+		auto ans=RungeKutta4(f_test, xmin, xmax, y0, h,control, eps);
 		for (;i<ans.size();)
 		{
 			
 			//Добавление на график
 			f1_list->Add(ans[i].first, ans[i].second);
-			//f2_list->Add(ans[i].first, test_sol(ans[i].first, y0));
+			f2_list->Add(ans[i].first, test_sol(ans[i].first, y0));
 
 			//Печать в таблицу
 			dataGridView1->Rows->Add();
 			dataGridView1->Rows[i]->Cells[0]->Value = ans[i].first;
 			dataGridView1->Rows[i]->Cells[1]->Value = floor(ans[i].second * 1000) / 1000;
-			//dataGridView1->Rows[i]->Cells[2]->Value = floor(test_sol(ans[i].first, y0) * 1000) / 1000;
+			dataGridView1->Rows[i]->Cells[2]->Value = floor(test_sol(ans[i].first, y0) * 1000) / 1000;
 
 			i++;
 		}
 		LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red,SymbolType::None);
-		//LineItem Curve2 = panel->AddCurve("F2(x)", f2_list, Color::Green, SymbolType::Plus);
+		LineItem Curve2 = panel->AddCurve("F2(x)", f2_list, Color::Green, SymbolType::Plus);
 		
 
 
