@@ -313,6 +313,7 @@ namespace Graph {
 			// radioButton1
 			// 
 			this->radioButton1->AutoSize = true;
+			this->radioButton1->Checked = true;
 			this->radioButton1->Location = System::Drawing::Point(38, 7);
 			this->radioButton1->Name = L"radioButton1";
 			this->radioButton1->Size = System::Drawing::Size(111, 17);
@@ -329,7 +330,6 @@ namespace Graph {
 			this->radioButton2->Name = L"radioButton2";
 			this->radioButton2->Size = System::Drawing::Size(70, 17);
 			this->radioButton2->TabIndex = 17;
-			this->radioButton2->TabStop = true;
 			this->radioButton2->Text = L"Задача 1";
 			this->radioButton2->UseVisualStyleBackColor = true;
 			this->radioButton2->CheckedChanged += gcnew System::EventHandler(this, &MyForm::radioButton2_CheckedChanged);
@@ -341,7 +341,6 @@ namespace Graph {
 			this->radioButton3->Name = L"radioButton3";
 			this->radioButton3->Size = System::Drawing::Size(70, 17);
 			this->radioButton3->TabIndex = 17;
-			this->radioButton3->TabStop = true;
 			this->radioButton3->Text = L"Задача 2";
 			this->radioButton3->UseVisualStyleBackColor = true;
 			this->radioButton3->CheckedChanged += gcnew System::EventHandler(this, &MyForm::radioButton3_CheckedChanged);
@@ -419,26 +418,44 @@ namespace Graph {
 		int i = 0;
 		dataGridView1->Rows->Clear();
 		
-		auto ans=RungeKutta4(f_test, xmin, xmax, y0, h,control, eps);
-		for (;i<ans.size();)
-		{
-			
-			//Добавление на график
-			f1_list->Add(ans[i].first, ans[i].second);
-			f2_list->Add(ans[i].first, test_sol(ans[i].first, y0));
+		if (radioButton1->Checked) {
+			auto ans = RungeKutta4(f_test, xmin, xmax, y0, h, control, eps);
+			for (; i < ans.size();)
+			{
 
-			//Печать в таблицу
-			dataGridView1->Rows->Add();
-			dataGridView1->Rows[i]->Cells[0]->Value = ans[i].first;
-			dataGridView1->Rows[i]->Cells[1]->Value = floor(ans[i].second * 1000) / 1000;
-			dataGridView1->Rows[i]->Cells[2]->Value = floor(test_sol(ans[i].first, y0) * 1000) / 1000;
+				//Добавление на график
+				f1_list->Add(ans[i].first, ans[i].second);
+				f2_list->Add(ans[i].first, test_sol(ans[i].first, y0));
 
-			i++;
+				//Печать в таблицу
+				dataGridView1->Rows->Add();
+				dataGridView1->Rows[i]->Cells[0]->Value = ans[i].first;
+				dataGridView1->Rows[i]->Cells[1]->Value = floor(ans[i].second * 1000) / 1000;
+				dataGridView1->Rows[i]->Cells[2]->Value = floor(test_sol(ans[i].first, y0) * 1000) / 1000;
+
+				i++;
+			}
+			LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red, SymbolType::None);
+			LineItem Curve2 = panel->AddCurve("F2(x)", f2_list, Color::Green, SymbolType::Plus);
 		}
-		LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red,SymbolType::None);
-		LineItem Curve2 = panel->AddCurve("F2(x)", f2_list, Color::Green, SymbolType::Plus);
-		
+		else if (radioButton2->Checked) {
+			auto ans = RungeKutta4(f1, xmin, xmax, y0, h, control, eps);
+			for (; i < ans.size();)
+			{
 
+				//Добавление на график
+				f1_list->Add(ans[i].first, ans[i].second);
+
+				//Печать в таблицу
+				dataGridView1->Rows->Add();
+				dataGridView1->Rows[i]->Cells[0]->Value = ans[i].first;
+				dataGridView1->Rows[i]->Cells[1]->Value = floor(ans[i].second * 1000) / 1000;
+
+				i++;
+			}
+			LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red, SymbolType::None);
+			
+		}
 
 		
 
