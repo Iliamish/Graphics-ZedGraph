@@ -31,8 +31,8 @@ std::pair<double, double> RK4_new_point(
 	double h
 ) {
 	double k1 = f(x, y);
-	double k2 = f(x + h / 2, y + h / 2 * k1);
-	double k3 = f(x + h / 2, y + h / 2 * k2);
+	double k2 = f(x + (h / 2), y + (h / 2) * k1);
+	double k3 = f(x + (h / 2), y + (h / 2) * k2);
 	double k4 = f(x + h, y + h * k3);
 	x += h; y += h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
 	return std::make_pair(x, y);
@@ -47,7 +47,7 @@ std::vector<std::pair<double, double> > RungeKutta4 //Метод РГ 4 порядка
 	double h=0.001, //Шаг интегрирования
 	bool control=false, //Контроль погрешности
 	double eps=0.000001, //Точность контроля погрешности
-	unsigned int NMax=50000 //Максимальное число итераций. Только для версии с переменным шагом.
+	unsigned int NMax=100 //Максимальное число итераций. Только для версии с переменным шагом.
 )
 {
 	std::vector<std::pair<double, double> > ans;
@@ -65,8 +65,8 @@ std::vector<std::pair<double, double> > RungeKutta4 //Метод РГ 4 порядка
 			auto p1 = RK4_new_point(f, x, y, h);
 			auto p12 = RK4_new_point(f, x, y, h / 2.0);
 			auto p2 = RK4_new_point(f, p12.first, p12.second, h / 2);
-			double s = abs(p2.second - p1.second) / 15;
-			if (s > eps) h = h / 2;
+			double s = abs(p2.second - p1.second) / 15.0;
+			if (s > eps) h = h / 2.0;
 			else {
 				x = p1.first; y = p1.second;
 				if (s < (eps / 32)) h = h * 2;
@@ -157,7 +157,7 @@ std::vector<vec3> RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно
 			auto p1 = RK4SS_new_point(U, x, y, z, h);
 			auto p12 = RK4SS_new_point(U, x, y, z, h / 2);
 			auto p2 = RK4SS_new_point(U, p12.x, p12.y, p12.z, h / 2);
-			double s = abs(p2.y - p1.y) / 15; // КОНТРОЛЬ ДЛЯ СИСТЕМЫ. ЧЕМУ ЖЕ РАВНО S?
+			double s = abs(sqrt((p2.y - p1.y)*(p2.z-p1.z)) / 15; // КОНТРОЛЬ ДЛЯ СИСТЕМЫ. ЧЕМУ ЖЕ РАВНО S?
 			if (s > eps) h = h / 2;
 			else {
 				x = p1.x; y = p1.y; z = p1.z;
