@@ -47,7 +47,7 @@ std::vector<std::pair<double, double> > RungeKutta4 //Метод РГ 4 порядка
 	double h=0.001, //Шаг интегрирования
 	bool control=false, //Контроль погрешности
 	double eps=0.000001, //Точность контроля погрешности
-	unsigned int NMax=100 //Максимальное число итераций. Только для версии с переменным шагом.
+	uint64_t NMax=100 //Максимальное число итераций. Только для версии с переменным шагом.
 )
 {
 	std::vector<std::pair<double, double> > ans;
