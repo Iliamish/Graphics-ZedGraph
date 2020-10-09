@@ -76,7 +76,7 @@ std::vector<std::pair<double, double> > RungeKutta4 //Метод РГ 4 порядка
 		
 	}
 	//Возможно то, что написано ниже является бредом. Относитесь со скептисом.
-	/*if (x + h > xmax) {
+	if (x + h > xmax) {
 		h = xmax - x;
 		if (!control) {
 			auto tmp = RK4_new_point(f, x, y, h);
@@ -99,14 +99,14 @@ std::vector<std::pair<double, double> > RungeKutta4 //Метод РГ 4 порядка
 			} while (s > eps);
 	
 		}
-	}*/
+	}
 
 	return ans;
 }
 
 //Какая-то странная заготовка для ОДУ 2-го порядка. NEED INFORMATION.
 
-/*
+
 struct vec3 {
 	double x;
 	double y;
@@ -139,7 +139,7 @@ std::vector<vec3> RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно
 	double h = 0.001, //Шаг интегрирования
 	bool control = false, //Контроль погрешности
 	double eps = 0.000001, //Точность контроля погрешности
-	unsigned int NMax = 50000 //Максимальное число итераций. Только для версии с переменным шагом.
+	unsigned int NMax = 500 //Максимальное число итераций. Только для версии с переменным шагом.
 )
 {
 	std::vector<vec3> ans;
@@ -157,7 +157,7 @@ std::vector<vec3> RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно
 			auto p1 = RK4SS_new_point(U, x, y, z, h);
 			auto p12 = RK4SS_new_point(U, x, y, z, h / 2);
 			auto p2 = RK4SS_new_point(U, p12.x, p12.y, p12.z, h / 2);
-			double s = abs(sqrt((p2.y - p1.y)*(p2.z-p1.z)) / 15; // КОНТРОЛЬ ДЛЯ СИСТЕМЫ. ЧЕМУ ЖЕ РАВНО S?
+			double s = sqrt(abs((p2.y - p1.y)*(p2.z-p1.z))) / 15; // КОНТРОЛЬ ДЛЯ СИСТЕМЫ. ЧЕМУ ЖЕ РАВНО S?
 			if (s > eps) h = h / 2;
 			else {
 				x = p1.x; y = p1.y; z = p1.z;
@@ -168,31 +168,28 @@ std::vector<vec3> RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно
 
 	}
 	//Возможно то, что написано ниже является бредом. Относитесь со скептисом.
-	/*if (x + h > xmax) {
+	if (x + h > xmax ) {
 		h = xmax - x;
 		if (!control) {
-			auto tmp = RK4_new_point(f, x, y, h);
-			x = tmp.first; y = tmp.second;
+			auto tmp = RK4SS_new_point(U, x, y, z, h);
+			x = tmp.x; y = tmp.y;
 			ans.push_back(tmp);
 		}
 		else {
-			double s;
-			if (i++ > NMax) return ans;
-			do {
-				auto p1 = RK4_new_point(f, x, y, h);
-				auto p12 = RK4_new_point(f, x, y, h / 2.0);
-				auto p2 = RK4_new_point(f, p12.first, p12.second, h / 2.0);
-				s = (p2.second - p1.second) / (15.0);
-				if (s > eps) h = h / 2;
-				else {
-					x = p1.first; y = p1.second;
-					ans.push_back(p1);
-				}
-			} while (s > eps);
-
+			if (i++ >= NMax) return ans; //Контроль итераций
+			auto p1 = RK4SS_new_point(U, x, y, z, h);
+			auto p12 = RK4SS_new_point(U, x, y, z, h / 2);
+			auto p2 = RK4SS_new_point(U, p12.x, p12.y, p12.z, h / 2);
+			double s = sqrt(abs((p2.y - p1.y) * (p2.z - p1.z))) / 15; // КОНТРОЛЬ ДЛЯ СИСТЕМЫ. ЧЕМУ ЖЕ РАВНО S?
+			if (s > eps) h = h / 2;
+			else {
+				x = p1.x; y = p1.y; z = p1.z;
+				if (s < (eps / 32)) h = h * 2;
+				ans.push_back(p1);
+			}
+			 while (s > eps);
 		}
 	} 
 	return ans;
 
 }
-*/
