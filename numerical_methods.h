@@ -25,6 +25,13 @@ double f2(double x, double y, double z, double a = 0, double b = 0) { // Задача 
 
 //std::function<double(double, double, double)> f2_t = f2; //НЕЛЬЗЯ СКАСТОВАТЬ. А ЗНАЧИТ ПРИДЕТСЯ ГДЕ-ТО ХРАНИТЬ ПАРАМЕТРЫ ИЛИ ПЕРЕПИСЫВАТЬ ЗАГОТОВКУ...
 
+struct TResults {
+	std::vector<std::pair<double, double> > res_vec;
+	std::vector<double> local_mistake_vec;
+	//double max_local_mistake;
+};
+
+
 std::pair<double, double> RK4_new_point(
 	std::function<double(double, double)> f, //Функция dy/dx
 	double x, double y,
@@ -39,7 +46,8 @@ std::pair<double, double> RK4_new_point(
 }
 
 
-std::vector<std::pair<double, double> > RungeKutta4 //Метод РГ 4 порядка
+
+TResults RungeKutta4 //Метод РГ 4 порядка
 (
 	std::function<double(double, double)> f, //Функция dy/dx
 	double xmin, double xmax, //Начало и конец отрезка интегрирования
@@ -50,7 +58,8 @@ std::vector<std::pair<double, double> > RungeKutta4 //Метод РГ 4 порядка
 	uint64_t NMax=100 //Максимальное число итераций. Только для версии с переменным шагом.
 )
 {
-	std::vector<std::pair<double, double> > ans;
+	TResults Res;
+	std::vector<std::pair<double, double> >& ans=Res.res_vec;
 	double x = xmin, y=y0;
 	ans.push_back(std::make_pair(x, y));
 	unsigned int i = 0;
@@ -61,14 +70,16 @@ std::vector<std::pair<double, double> > RungeKutta4 //Метод РГ 4 порядка
 			ans.push_back(tmp);
 		}
 		else {
-			if (i++ >= NMax) return ans; //Контроль итераций
+			if (i++ >= NMax) return Res; //Контроль итераций
 			auto p1 = RK4_new_point(f, x, y, h);
 			auto p12 = RK4_new_point(f, x, y, h / 2.0);
 			auto p2 = RK4_new_point(f, p12.first, p12.second, h / 2);
+			
 			double s = abs(p2.second - p1.second) / 15.0;
 			if (s > eps) h = h / 2.0;
 			else {
 				x = p1.first; y = p1.second;
+				Res.local_mistake_vec.push_back(p2.second - p1.second);
 				if (s < (eps / 32)) h = h * 2;
 				ans.push_back(p1);
 			}
@@ -85,14 +96,16 @@ std::vector<std::pair<double, double> > RungeKutta4 //Метод РГ 4 порядка
 		}
 		else {
 			double s;
-			if (i++ > NMax) return ans;
+			if (i++ > NMax) return Res;
 			do {
 				auto p1 = RK4_new_point(f, x, y, h);
 				auto p12 = RK4_new_point(f, x, y, h / 2.0);
 				auto p2 = RK4_new_point(f, p12.first, p12.second, h / 2.0);
-				s = (p2.second - p1.second) / (15.0);
+				
+				s = abs(p2.second - p1.second) / (15.0);
 				if (s > eps) h = h / 2;
 				else {
+					Res.local_mistake_vec.push_back(p2.second - p1.second);
 					x = p1.first; y = p1.second;
 					ans.push_back(p1);
 				}
@@ -101,7 +114,7 @@ std::vector<std::pair<double, double> > RungeKutta4 //Метод РГ 4 порядка
 		}
 	}
 
-	return ans;
+	return Res;
 }
 
 //Какая-то странная заготовка для ОДУ 2-го порядка. NEED INFORMATION.
@@ -119,10 +132,10 @@ vec3 RK4SS_new_point(
 	double x, double y, double z,
 	double h
 ) {
-	double q1 = f(x, y,z), k1=z;
-	double q2 = f(x + h / 2, y + h / 2 * q1,z), k2=z+q1*h/2;
-	double q3 = f(x + h / 2, y + h / 2 * q2,z), k3= z + q2 * h / 2;
-	double q4 = f(x + h, y + h * q3,z), k4=z+q3*h;
+	double q1 = f(x, y,z), k1 = z;
+	double q2 = f(x + h / 2, y + h / 2 * q1, z), k2 = z + q1 * h / 2;
+	double q3 = f(x + h / 2, y + h / 2 * q2, z), k3 = z + q2 * h / 2;
+	double q4 = f(x + h, y + h * q3, z), k4 = z + q3 * h;
 	x += h; 
 	z += h / 6 * (q1 + 2 * q2 + 2 * q3 + q4);
 	y += h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
