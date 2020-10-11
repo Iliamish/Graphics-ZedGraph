@@ -68,6 +68,7 @@ namespace Graph {
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ F_1;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ F_2;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ Local_Mistake;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^ Global_Mistake;
 
 
 
@@ -92,6 +93,10 @@ namespace Graph {
 			this->zedGraphControl1 = (gcnew ZedGraph::ZedGraphControl());
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->dataGridView1 = (gcnew System::Windows::Forms::DataGridView());
+			this->X = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->F_1 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->F_2 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->Local_Mistake = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
@@ -113,10 +118,7 @@ namespace Graph {
 			this->radioButton3 = (gcnew System::Windows::Forms::RadioButton());
 			this->textBox8 = (gcnew System::Windows::Forms::TextBox());
 			this->label8 = (gcnew System::Windows::Forms::Label());
-			this->X = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
-			this->F_1 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
-			this->F_2 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
-			this->Local_Mistake = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->Global_Mistake = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -149,9 +151,9 @@ namespace Graph {
 			// dataGridView1
 			// 
 			this->dataGridView1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
-			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(4) {
+			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(5) {
 				this->X, this->F_1,
-					this->F_2, this->Local_Mistake
+					this->F_2, this->Local_Mistake, this->Global_Mistake
 			});
 			this->dataGridView1->Location = System::Drawing::Point(636, 30);
 			this->dataGridView1->Name = L"dataGridView1";
@@ -159,6 +161,37 @@ namespace Graph {
 			this->dataGridView1->RowHeadersWidth = 51;
 			this->dataGridView1->Size = System::Drawing::Size(274, 327);
 			this->dataGridView1->TabIndex = 2;
+			// 
+			// X
+			// 
+			this->X->HeaderText = L"X";
+			this->X->MinimumWidth = 6;
+			this->X->Name = L"X";
+			this->X->ReadOnly = true;
+			this->X->Width = 50;
+			// 
+			// F_1
+			// 
+			this->F_1->HeaderText = L"F_1";
+			this->F_1->MinimumWidth = 6;
+			this->F_1->Name = L"F_1";
+			this->F_1->ReadOnly = true;
+			this->F_1->Width = 125;
+			// 
+			// F_2
+			// 
+			this->F_2->HeaderText = L"F_2";
+			this->F_2->MinimumWidth = 6;
+			this->F_2->Name = L"F_2";
+			this->F_2->ReadOnly = true;
+			this->F_2->Width = 125;
+			// 
+			// Local_Mistake
+			// 
+			this->Local_Mistake->HeaderText = L"Local_Mistake";
+			this->Local_Mistake->Name = L"Local_Mistake";
+			this->Local_Mistake->ReadOnly = true;
+			this->Local_Mistake->Visible = false;
 			// 
 			// label1
 			// 
@@ -354,36 +387,12 @@ namespace Graph {
 			this->label8->TabIndex = 18;
 			this->label8->Text = L"NMax";
 			// 
-			// X
+			// Global_Mistake
 			// 
-			this->X->HeaderText = L"X";
-			this->X->MinimumWidth = 6;
-			this->X->Name = L"X";
-			this->X->ReadOnly = true;
-			this->X->Width = 50;
-			// 
-			// F_1
-			// 
-			this->F_1->HeaderText = L"F_1";
-			this->F_1->MinimumWidth = 6;
-			this->F_1->Name = L"F_1";
-			this->F_1->ReadOnly = true;
-			this->F_1->Width = 125;
-			// 
-			// F_2
-			// 
-			this->F_2->HeaderText = L"F_2";
-			this->F_2->MinimumWidth = 6;
-			this->F_2->Name = L"F_2";
-			this->F_2->ReadOnly = true;
-			this->F_2->Width = 125;
-			// 
-			// Local_Mistake
-			// 
-			this->Local_Mistake->HeaderText = L"Local_Mistake";
-			this->Local_Mistake->Name = L"Local_Mistake";
-			this->Local_Mistake->ReadOnly = true;
-			this->Local_Mistake->Visible = false;
+			this->Global_Mistake->HeaderText = L"Global_Mistake";
+			this->Global_Mistake->Name = L"Global_Mistake";
+			this->Global_Mistake->ReadOnly = true;
+			this->Global_Mistake->Visible = false;
 			// 
 			// MyForm
 			// 
@@ -476,6 +485,8 @@ namespace Graph {
 					if (abs(Res.local_mistake_vec[j]) > Max_Local_mis) Max_Local_mis = abs(Res.local_mistake_vec[j]);
 				}
 			}
+			this->Global_Mistake->Visible = true;
+			double MaxGlobalMistake = ans[0].second - test_sol(ans[0].first, y0);
 			for (; i < ans.size();)
 			{
 
@@ -489,15 +500,21 @@ namespace Graph {
 				dataGridView1->Rows[i]->Cells[1]->Value = floor(ans[i].second * 1000) / 1000;
 				dataGridView1->Rows[i]->Cells[2]->Value = floor(test_sol(ans[i].first, y0) * 1000) / 1000;
 
+				double mtmp = ans[i].second - test_sol(ans[i].first, y0);
+				dataGridView1->Rows[i]->Cells[4]->Value = mtmp ;
+				MaxGlobalMistake = (MaxGlobalMistake < abs(mtmp)) ? mtmp: MaxGlobalMistake;
+				
 				i++;
 			}
 			LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red, SymbolType::None);
 			LineItem Curve2 = panel->AddCurve("F2(x)", f2_list, Color::Green, SymbolType::Plus);
 
+			auto tmp = "Максимальная по модулю глобальная погрешность = "+(MaxGlobalMistake)+ "\n";
+				
 			if (control) {
-				auto tmp = "Максимальная по модулю локальная погрешность =" + (Max_Local_mis);
-				MessageBox::Show(tmp);
+				tmp += "Максимальная по модулю локальная погрешность = " + Max_Local_mis+"\n Всего удвоений шага: "+Res.ND+"\nВсего делений шага: "+ Res.NH;
 			}
+			MessageBox::Show(tmp);
 		}
 		else if (radioButton2->Checked) {
 			double Max_Local_mis;
@@ -528,7 +545,7 @@ namespace Graph {
 			LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red, SymbolType::None);
 
 			if (control) { 
-				auto tmp = "Максимальная по модулю локальная погрешность =" + (Max_Local_mis);
+				auto tmp = "Максимальная по модулю локальная погрешность =" + (Max_Local_mis)+"\n Всего удвоений шага: " + Res.ND + "\nВсего делений шага: " + Res.NH;;
 				MessageBox::Show(tmp);
 			}
 		}

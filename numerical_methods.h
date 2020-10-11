@@ -28,6 +28,8 @@ double f2(double x, double y, double z, double a = 0, double b = 0) { // Задача 
 struct TResults {
 	std::vector<std::pair<double, double> > res_vec;
 	std::vector<double> local_mistake_vec;
+	uint64_t ND = 0;
+	uint64_t NH = 0;
 	//double max_local_mistake;
 };
 
@@ -63,7 +65,7 @@ TResults RungeKutta4 //Метод РГ 4 порядка
 	double x = xmin, y=y0;
 	ans.push_back(std::make_pair(x, y));
 	unsigned int i = 0;
-	for (; x <= xmax-h; ) { //Если до границы осталось меньше h, то b не используется. FIXED (А надо ли?)
+	for (; x < xmax-h; ) { //Если до границы осталось меньше h, то b не используется. FIXED (А надо ли?)
 		if (!control) {
 			auto tmp = RK4_new_point(f, x, y, h);
 			x = tmp.first; y = tmp.second;
@@ -76,18 +78,20 @@ TResults RungeKutta4 //Метод РГ 4 порядка
 			auto p2 = RK4_new_point(f, p12.first, p12.second, h / 2);
 			
 			double s = abs(p2.second - p1.second) / 15.0;
-			if (s > eps) h = h / 2.0;
+			if (s > eps) { h = h / 2.0; ++Res.NH; }
 			else {
 				x = p1.first; y = p1.second;
 				Res.local_mistake_vec.push_back(p2.second - p1.second);
-				if (s < (eps / 32)) h = h * 2;
+				if (s < (eps / 32)) {
+					h = h * 2; ++Res.ND;
+				}
 				ans.push_back(p1);
 			}
 		}
 		
 	}
 	//Возможно то, что написано ниже является бредом. Относитесь со скептисом.
-	if (x + h > xmax) {
+	if (x + h >= xmax) {
 		h = xmax - x;
 		if (!control) {
 			auto tmp = RK4_new_point(f, x, y, h);
@@ -103,7 +107,7 @@ TResults RungeKutta4 //Метод РГ 4 порядка
 				auto p2 = RK4_new_point(f, p12.first, p12.second, h / 2.0);
 				
 				s = abs(p2.second - p1.second) / (15.0);
-				if (s > eps) h = h / 2;
+				if (s > eps){ h = h / 2; ++Res.NH;}
 				else {
 					Res.local_mistake_vec.push_back(p2.second - p1.second);
 					x = p1.first; y = p1.second;
