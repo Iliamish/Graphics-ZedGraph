@@ -49,7 +49,7 @@ namespace Graph {
 	private: System::Windows::Forms::TextBox^  textBox2;
 	private: System::Windows::Forms::Label^  label3;
 	private: System::Windows::Forms::TextBox^  textBox3;
-	private: System::Windows::Forms::Button^  button2;
+
 	private: System::Windows::Forms::TextBox^  textBox4;
 	private: System::Windows::Forms::Label^  label4;
 	private: System::Windows::Forms::TextBox^  textBox5;
@@ -69,6 +69,8 @@ namespace Graph {
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ F_2;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ Local_Mistake;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ Global_Mistake;
+	private: System::Windows::Forms::TextBox^ textBox9;
+	private: System::Windows::Forms::Label^ label9;
 
 
 
@@ -104,7 +106,6 @@ namespace Graph {
 			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->textBox3 = (gcnew System::Windows::Forms::TextBox());
-			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->textBox4 = (gcnew System::Windows::Forms::TextBox());
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->textBox5 = (gcnew System::Windows::Forms::TextBox());
@@ -119,6 +120,8 @@ namespace Graph {
 			this->radioButton3 = (gcnew System::Windows::Forms::RadioButton());
 			this->textBox8 = (gcnew System::Windows::Forms::TextBox());
 			this->label8 = (gcnew System::Windows::Forms::Label());
+			this->textBox9 = (gcnew System::Windows::Forms::TextBox());
+			this->label9 = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -140,9 +143,9 @@ namespace Graph {
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(710, 386);
+			this->button1->Location = System::Drawing::Point(747, 393);
 			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(142, 29);
+			this->button1->Size = System::Drawing::Size(142, 45);
 			this->button1->TabIndex = 1;
 			this->button1->Text = L"Draw";
 			this->button1->UseVisualStyleBackColor = true;
@@ -251,23 +254,14 @@ namespace Graph {
 			this->textBox3->TabIndex = 8;
 			this->textBox3->Text = L"0,1";
 			// 
-			// button2
-			// 
-			this->button2->Location = System::Drawing::Point(710, 437);
-			this->button2->Name = L"button2";
-			this->button2->Size = System::Drawing::Size(142, 29);
-			this->button2->TabIndex = 9;
-			this->button2->Text = L"Zoom";
-			this->button2->UseVisualStyleBackColor = true;
-			this->button2->Click += gcnew System::EventHandler(this, &MyForm::button2_Click);
-			// 
 			// textBox4
 			// 
 			this->textBox4->Location = System::Drawing::Point(190, 437);
 			this->textBox4->Name = L"textBox4";
 			this->textBox4->Size = System::Drawing::Size(49, 20);
 			this->textBox4->TabIndex = 13;
-			this->textBox4->Text = L"1";
+			this->textBox4->Text = L"0,0";
+			this->textBox4->Visible = false;
 			// 
 			// label4
 			// 
@@ -277,6 +271,7 @@ namespace Graph {
 			this->label4->Size = System::Drawing::Size(13, 13);
 			this->label4->TabIndex = 12;
 			this->label4->Text = L"b";
+			this->label4->Visible = false;
 			// 
 			// textBox5
 			// 
@@ -284,7 +279,8 @@ namespace Graph {
 			this->textBox5->Name = L"textBox5";
 			this->textBox5->Size = System::Drawing::Size(48, 20);
 			this->textBox5->TabIndex = 11;
-			this->textBox5->Text = L"0";
+			this->textBox5->Text = L"1,0";
+			this->textBox5->Visible = false;
 			// 
 			// label5
 			// 
@@ -294,6 +290,7 @@ namespace Graph {
 			this->label5->Size = System::Drawing::Size(13, 13);
 			this->label5->TabIndex = 10;
 			this->label5->Text = L"a";
+			this->label5->Visible = false;
 			// 
 			// label6
 			// 
@@ -394,11 +391,32 @@ namespace Graph {
 			this->label8->TabIndex = 18;
 			this->label8->Text = L"NMax";
 			// 
+			// textBox9
+			// 
+			this->textBox9->Location = System::Drawing::Point(392, 433);
+			this->textBox9->Name = L"textBox9";
+			this->textBox9->Size = System::Drawing::Size(49, 20);
+			this->textBox9->TabIndex = 21;
+			this->textBox9->Text = L"1,0";
+			this->textBox9->Visible = false;
+			// 
+			// label9
+			// 
+			this->label9->AutoSize = true;
+			this->label9->Location = System::Drawing::Point(373, 436);
+			this->label9->Name = L"label9";
+			this->label9->Size = System::Drawing::Size(18, 13);
+			this->label9->TabIndex = 20;
+			this->label9->Text = L"z0";
+			this->label9->Visible = false;
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(922, 497);
+			this->ClientSize = System::Drawing::Size(922, 481);
+			this->Controls->Add(this->textBox9);
+			this->Controls->Add(this->label9);
 			this->Controls->Add(this->textBox8);
 			this->Controls->Add(this->label8);
 			this->Controls->Add(this->radioButton3);
@@ -411,7 +429,6 @@ namespace Graph {
 			this->Controls->Add(this->label4);
 			this->Controls->Add(this->textBox5);
 			this->Controls->Add(this->label5);
-			this->Controls->Add(this->button2);
 			this->Controls->Add(this->textBox3);
 			this->Controls->Add(this->label3);
 			this->Controls->Add(this->textBox6);
@@ -552,7 +569,10 @@ namespace Graph {
 			}
 		}
 		else if (radioButton3->Checked) {
-			auto Res=RungeKutta4SS(f2, xmin, xmax, y0, 1.0, h, control, eps, NMax);
+			double z0 = Convert::ToDouble(textBox9->Text);
+			double a = Convert::ToDouble(textBox5->Text);
+			double b = Convert::ToDouble(textBox4->Text);
+			auto Res=RungeKutta4SS(f2, xmin, xmax, y0, z0, h,a,b, control, eps, NMax);
 			auto& ans = Res.res_vec;
 			this->Global_Mistake->Visible = false;
 			this->F_2->Visible = true;
@@ -571,6 +591,7 @@ namespace Graph {
 
 				//Добавление на график
 				f1_list->Add(ans[i].x, ans[i].y);
+				f2_list->Add(ans[i].x, ans[i].z);
 
 				//Печать в таблицу
 				dataGridView1->Rows->Add();
@@ -580,6 +601,7 @@ namespace Graph {
 				i++;
 			}
 			LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red, SymbolType::None);
+			//LineItem Curve2 = panel->AddCurve("F2(x)", f2_list, Color::Green, SymbolType::Plus);
 
 			if (control) {
 				auto tmp = "Максимальная по модулю локальная погрешность =" + (Max_Local_mis)+"\nВсего удвоений шага: " + Res.ND + "\nВсего делений шага: " + Res.NH;;
@@ -608,25 +630,7 @@ namespace Graph {
 	private: System::Void zedGraphControl1_Load(System::Object^  sender, System::EventArgs^  e) {
 	}
 
-private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
-	
-	GraphPane^ panel = zedGraphControl1->GraphPane;
-	double xmin = Convert::ToDouble(textBox5->Text);
-	double xmax = Convert::ToDouble(textBox4->Text);
-	
-	// Устанавливаем интересующий нас интервал по оси X
-	panel->XAxis->Scale->Min = xmin;
-	panel->XAxis->Scale->Max = xmax;
 
-	// Вызываем метод AxisChange (), чтобы обновить данные об осях. 
-	// В противном случае на рисунке будет показана только часть графика, 
-	// которая умещается в интервалы по осям, установленные по умолчанию
-	zedGraphControl1->AxisChange();
-	// Обновляем график
-	zedGraphControl1->Invalidate();
-
-
-}
 private: System::Void label6_Click(System::Object^ sender, System::EventArgs^ e) {
 }
 private: System::Void textBox6_TextChanged(System::Object^ sender, System::EventArgs^ e) {
@@ -635,6 +639,12 @@ private: System::Void radioButton1_CheckedChanged(System::Object^ sender, System
 
 }
 private: System::Void radioButton3_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+	this->label4->Visible = radioButton3->Checked;
+	this->label5->Visible = radioButton3->Checked;
+	this->label9->Visible = radioButton3->Checked;
+	this->textBox4->Visible = radioButton3->Checked;
+	this->textBox5->Visible = radioButton3->Checked;
+	this->textBox9->Visible = radioButton3->Checked;
 }
 private: System::Void radioButton2_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
 }

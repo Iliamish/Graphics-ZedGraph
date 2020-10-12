@@ -19,7 +19,7 @@ double f1(double x, double y) { // Задача 1
 	return (1.0/(1+3.0*x+x*x))*(y*y)+y-pow(y,3)*sin(10*x); //ПРОВЕРИТЬ
 }
 
-double f2(double x, double y, double z, double a = 1.0, double b = 0.0) { // Задача 2
+double f2(double x, double y, double z, double a, double b) { // Задача 2
 	return -a * sqrt((z * z) + 1) - b;
 }
 
@@ -144,7 +144,7 @@ vec3 RK4SS_new_point(
 	std::function<double(double, double,double,double,double)> f, //Функция dz/dx
 	double x, double y, double z,
 	double h,
-	double a=1.0, double b=0.0
+	double a, double b
 ) {
 	double q1 = f(x, y,z,a,b), k1 = z;
 	double q2 = f(x + h / 2, y + h / 2 * q1, z, a, b), k2 = z + q1 * h / 2;
@@ -164,6 +164,7 @@ TResultsSS RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно застав
 	double xmin, double xmax, //Начало и конец отрезка интегрирования
 	double y0, double z0, //Начальные условия, где z
 	double h = 0.001, //Шаг интегрирования
+	double a = 1.0, double b = 0.0,
 	bool control = false, //Контроль погрешности
 	double eps = 0.000001, //Точность контроля погрешности
 	unsigned int NMax = 500 //Максимальное число итераций. Только для версии с переменным шагом.
@@ -177,15 +178,15 @@ TResultsSS RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно застав
 	unsigned int i = 0;
 	for (; x < xmax - h; ) { //Если до границы осталось меньше h, то b не используется. FIXED (А надо ли?)
 		if (!control) {
-			auto tmp = RK4SS_new_point(U, x, y, z, h);
+			auto tmp = RK4SS_new_point(U, x, y, z, h,a,b);
 			x = tmp.x; y = tmp.y;
 			ans.push_back(tmp);
 		}
 		else {
 			if (i++ >= NMax) return Res; //Контроль итераций
-			auto p1 = RK4SS_new_point(U, x, y, z, h);
-			auto p12 = RK4SS_new_point(U, x, y, z, h / 2);
-			auto p2 = RK4SS_new_point(U, p12.x, p12.y, p12.z, h / 2);
+			auto p1 = RK4SS_new_point(U, x, y, z, h,a,b);
+			auto p12 = RK4SS_new_point(U, x, y, z, h / 2,a,b);
+			auto p2 = RK4SS_new_point(U, p12.x, p12.y, p12.z, h / 2,a,b);
 			double etmp = sqrt(abs((p2.y - p1.y) * (p2.z - p1.z)));
 			Res.local_mistake_vec.push_back(etmp);
 			double s = etmp / 15; // КОНТРОЛЬ ДЛЯ СИСТЕМЫ. ЧЕМУ ЖЕ РАВНО S?
@@ -204,15 +205,15 @@ TResultsSS RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно застав
 	if (x + h >= xmax ) {
 		h = xmax - x;
 		if (!control) {
-			auto tmp = RK4SS_new_point(U, x, y, z, h);
+			auto tmp = RK4SS_new_point(U, x, y, z, h,a,b);
 			x = tmp.x; y = tmp.y;
 			ans.push_back(tmp);
 		}
 		else {
 			if (i++ >= NMax) return Res; //Контроль итераций
-			auto p1 = RK4SS_new_point(U, x, y, z, h);
-			auto p12 = RK4SS_new_point(U, x, y, z, h / 2);
-			auto p2 = RK4SS_new_point(U, p12.x, p12.y, p12.z, h / 2);
+			auto p1 = RK4SS_new_point(U, x, y, z, h,a,b);
+			auto p12 = RK4SS_new_point(U, x, y, z, h / 2, a, b);
+			auto p2 = RK4SS_new_point(U, p12.x, p12.y, p12.z, h / 2, a, b);
 			double etmp = sqrt(abs((p2.y - p1.y) * (p2.z - p1.z)));
 			Res.local_mistake_vec.push_back(etmp);
 			double s = etmp / 15; // КОНТРОЛЬ ДЛЯ СИСТЕМЫ. ЧЕМУ ЖЕ РАВНО S?
