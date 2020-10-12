@@ -97,6 +97,7 @@ namespace Graph {
 			this->F_1 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->F_2 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->Local_Mistake = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->Global_Mistake = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
@@ -118,7 +119,6 @@ namespace Graph {
 			this->radioButton3 = (gcnew System::Windows::Forms::RadioButton());
 			this->textBox8 = (gcnew System::Windows::Forms::TextBox());
 			this->label8 = (gcnew System::Windows::Forms::Label());
-			this->Global_Mistake = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -193,14 +193,21 @@ namespace Graph {
 			this->Local_Mistake->ReadOnly = true;
 			this->Local_Mistake->Visible = false;
 			// 
+			// Global_Mistake
+			// 
+			this->Global_Mistake->HeaderText = L"Global_Mistake";
+			this->Global_Mistake->Name = L"Global_Mistake";
+			this->Global_Mistake->ReadOnly = true;
+			this->Global_Mistake->Visible = false;
+			// 
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(59, 394);
+			this->label1->Location = System::Drawing::Point(44, 397);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(13, 13);
+			this->label1->Size = System::Drawing::Size(28, 13);
 			this->label1->TabIndex = 3;
-			this->label1->Text = L"a";
+			this->label1->Text = L"xmin";
 			// 
 			// textBox1
 			// 
@@ -213,11 +220,11 @@ namespace Graph {
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(171, 396);
+			this->label2->Location = System::Drawing::Point(153, 396);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(13, 13);
+			this->label2->Size = System::Drawing::Size(31, 13);
 			this->label2->TabIndex = 5;
-			this->label2->Text = L"b";
+			this->label2->Text = L"xmax";
 			// 
 			// textBox2
 			// 
@@ -387,13 +394,6 @@ namespace Graph {
 			this->label8->TabIndex = 18;
 			this->label8->Text = L"NMax";
 			// 
-			// Global_Mistake
-			// 
-			this->Global_Mistake->HeaderText = L"Global_Mistake";
-			this->Global_Mistake->Name = L"Global_Mistake";
-			this->Global_Mistake->ReadOnly = true;
-			this->Global_Mistake->Visible = false;
-			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -473,7 +473,7 @@ namespace Graph {
 		
 		
 		if (radioButton1->Checked) {
-			
+			this->F_2->Visible = true;
 			auto Res = RungeKutta4(f_test, xmin, xmax, y0, h, control, eps,NMax);
 			auto& ans = Res.res_vec;
 			double Max_Local_mis;
@@ -519,6 +519,7 @@ namespace Graph {
 		else if (radioButton2->Checked) {
 			double Max_Local_mis;
 			this->F_2->Visible = false;
+			this->Global_Mistake->Visible = false;
 			auto Res = RungeKutta4(f1, xmin, xmax, y0, h, control, eps,NMax);
 			auto& ans = Res.res_vec;
 			if (control) {
@@ -545,7 +546,40 @@ namespace Graph {
 			LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red, SymbolType::None);
 
 			if (control) { 
-				auto tmp = "Максимальная по модулю локальная погрешность =" + (Max_Local_mis)+"\n Всего удвоений шага: " + Res.ND + "\nВсего делений шага: " + Res.NH;;
+				auto tmp = "Максимальная по модулю локальная погрешность =" + (Max_Local_mis)+"\nВсего удвоений шага: " + Res.ND + "\nВсего делений шага: " + Res.NH;;
+				MessageBox::Show(tmp);
+			}
+		}
+		else if (radioButton3->Checked) {
+			auto Res=RungeKutta4SS(f2, xmin, xmax, y0, 1.0, h, control, eps, NMax);
+			auto& ans = Res.res_vec;
+			//this->F_2->Visible = true;
+			double Max_Local_mis;
+			if (control) {
+				this->Local_Mistake->Visible = true;
+				Max_Local_mis = abs(Res.local_mistake_vec[0]);
+				for (size_t j = 0; j < Res.local_mistake_vec.size(); ++j) {
+					dataGridView1->Rows->Add(); dataGridView1->Rows[j]->Cells[3]->Value = Res.local_mistake_vec[j];
+					if (abs(Res.local_mistake_vec[j]) > Max_Local_mis) Max_Local_mis = abs(Res.local_mistake_vec[j]);
+				}
+			}
+			for (; i < ans.size();)
+			{
+
+				//Добавление на график
+				f1_list->Add(ans[i].x, ans[i].y);
+
+				//Печать в таблицу
+				dataGridView1->Rows->Add();
+				dataGridView1->Rows[i]->Cells[0]->Value = ans[i].x;
+				dataGridView1->Rows[i]->Cells[1]->Value = floor(ans[i].y * 1000) / 1000;
+
+				i++;
+			}
+			LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red, SymbolType::None);
+
+			if (control) {
+				auto tmp = "Максимальная по модулю локальная погрешность =" + (Max_Local_mis)+"\nВсего удвоений шага: " + Res.ND + "\nВсего делений шага: " + Res.NH;;
 				MessageBox::Show(tmp);
 			}
 		}

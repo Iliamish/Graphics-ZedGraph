@@ -19,7 +19,7 @@ double f1(double x, double y) { // Задача 1
 	return (1.0/(1+3.0*x+x*x))*(y*y)+y-pow(y,3)*sin(10*x); //ПРОВЕРИТЬ
 }
 
-double f2(double x, double y, double z, double a = 0, double b = 0) { // Задача 2
+double f2(double x, double y, double z, double a = 1.0, double b = 0.0) { // Задача 2
 	return -a * sqrt((z * z) + 1) - b;
 }
 
@@ -65,6 +65,7 @@ TResults RungeKutta4 //Метод РГ 4 порядка
 	double x = xmin, y=y0;
 	ans.push_back(std::make_pair(x, y));
 	unsigned int i = 0;
+	Res.local_mistake_vec.push_back(0.0);
 	for (; x < xmax-h; ) { //Если до границы осталось меньше h, то b не используется. FIXED (А надо ли?)
 		if (!control) {
 			auto tmp = RK4_new_point(f, x, y, h);
@@ -131,26 +132,35 @@ struct vec3 {
 	vec3(double _x, double _y, double _z) { x = _x; y = _y; z = _z; }
 };
 
+struct TResultsSS {
+	std::vector<vec3 > res_vec;
+	std::vector<double> local_mistake_vec;
+	uint64_t ND = 0;
+	uint64_t NH = 0;
+	//double max_local_mistake;
+};
+
 vec3 RK4SS_new_point(
-	std::function<double(double, double,double)> f, //Функция dz/dx
+	std::function<double(double, double,double,double,double)> f, //Функция dz/dx
 	double x, double y, double z,
-	double h
+	double h,
+	double a=1.0, double b=0.0
 ) {
-	double q1 = f(x, y,z), k1 = z;
-	double q2 = f(x + h / 2, y + h / 2 * q1, z), k2 = z + q1 * h / 2;
-	double q3 = f(x + h / 2, y + h / 2 * q2, z), k3 = z + q2 * h / 2;
-	double q4 = f(x + h, y + h * q3, z), k4 = z + q3 * h;
+	double q1 = f(x, y,z,a,b), k1 = z;
+	double q2 = f(x + h / 2, y + h / 2 * q1, z, a, b), k2 = z + q1 * h / 2;
+	double q3 = f(x + h / 2, y + h / 2 * q2, z, a, b), k3 = z + q2 * h / 2;
+	double q4 = f(x + h, y + h * q3, z, a, b), k4 = z + q3 * h;
 	x += h; 
-	z += h / 6 * (q1 + 2 * q2 + 2 * q3 + q4);
-	y += h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+	z += h  * (q1 + 2 * q2 + 2 * q3 + q4) / 6.0;
+	y += h * (k1 + 2 * k2 + 2 * k3 + k4) / 6.0;
 	return vec3(x, y, z);
 }
 
 
 
-std::vector<vec3> RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно заставить решать систему если добавить y'= V(x,y,z).
+TResultsSS RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно заставить решать систему если добавить y'= V(x,y,z).
 (
-	std::function<double(double, double, double)> U, //Функция z'= U(x,y,z) , где z=y'
+	std::function<double(double, double, double, double, double)> U, //Функция z'= U(x,y,z) , где z=y'
 	double xmin, double xmax, //Начало и конец отрезка интегрирования
 	double y0, double z0, //Начальные условия, где z
 	double h = 0.001, //Шаг интегрирования
@@ -159,33 +169,39 @@ std::vector<vec3> RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно
 	unsigned int NMax = 500 //Максимальное число итераций. Только для версии с переменным шагом.
 )
 {
-	std::vector<vec3> ans;
+	TResultsSS Res;
+	std::vector<vec3>& ans=Res.res_vec;
+	Res.local_mistake_vec.push_back(0.0);
 	double x = xmin, y = y0, z=z0;
 	ans.push_back(vec3(x, y, z));
 	unsigned int i = 0;
-	for (; x <= xmax - h; ) { //Если до границы осталось меньше h, то b не используется. FIXED (А надо ли?)
+	for (; x < xmax - h; ) { //Если до границы осталось меньше h, то b не используется. FIXED (А надо ли?)
 		if (!control) {
 			auto tmp = RK4SS_new_point(U, x, y, z, h);
 			x = tmp.x; y = tmp.y;
 			ans.push_back(tmp);
 		}
 		else {
-			if (i++ >= NMax) return ans; //Контроль итераций
+			if (i++ >= NMax) return Res; //Контроль итераций
 			auto p1 = RK4SS_new_point(U, x, y, z, h);
 			auto p12 = RK4SS_new_point(U, x, y, z, h / 2);
 			auto p2 = RK4SS_new_point(U, p12.x, p12.y, p12.z, h / 2);
-			double s = sqrt(abs((p2.y - p1.y)*(p2.z-p1.z))) / 15; // КОНТРОЛЬ ДЛЯ СИСТЕМЫ. ЧЕМУ ЖЕ РАВНО S?
-			if (s > eps) h = h / 2;
+			double etmp = sqrt(abs((p2.y - p1.y) * (p2.z - p1.z)));
+			Res.local_mistake_vec.push_back(etmp);
+			double s = etmp / 15; // КОНТРОЛЬ ДЛЯ СИСТЕМЫ. ЧЕМУ ЖЕ РАВНО S?
+			if (s > eps) { h = h / 2; ++Res.NH; }
 			else {
 				x = p1.x; y = p1.y; z = p1.z;
-				if (s < (eps / 32)) h = h * 2;
+				if (s < (eps / 32)) {
+					h = h * 2; ++Res.ND;
+				}
 				ans.push_back(p1);
 			}
 		}
 
 	}
 	//Возможно то, что написано ниже является бредом. Относитесь со скептисом.
-	if (x + h > xmax ) {
+	if (x + h >= xmax ) {
 		h = xmax - x;
 		if (!control) {
 			auto tmp = RK4SS_new_point(U, x, y, z, h);
@@ -193,12 +209,14 @@ std::vector<vec3> RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно
 			ans.push_back(tmp);
 		}
 		else {
-			if (i++ >= NMax) return ans; //Контроль итераций
+			if (i++ >= NMax) return Res; //Контроль итераций
 			auto p1 = RK4SS_new_point(U, x, y, z, h);
 			auto p12 = RK4SS_new_point(U, x, y, z, h / 2);
 			auto p2 = RK4SS_new_point(U, p12.x, p12.y, p12.z, h / 2);
-			double s = sqrt(abs((p2.y - p1.y) * (p2.z - p1.z))) / 15; // КОНТРОЛЬ ДЛЯ СИСТЕМЫ. ЧЕМУ ЖЕ РАВНО S?
-			if (s > eps) h = h / 2;
+			double etmp = sqrt(abs((p2.y - p1.y) * (p2.z - p1.z)));
+			Res.local_mistake_vec.push_back(etmp);
+			double s = etmp / 15; // КОНТРОЛЬ ДЛЯ СИСТЕМЫ. ЧЕМУ ЖЕ РАВНО S?
+			if (s > eps) { h = h / 2; ++Res.NH; }
 			else {
 				x = p1.x; y = p1.y; z = p1.z;
 				if (s < (eps / 32)) h = h * 2;
@@ -207,6 +225,6 @@ std::vector<vec3> RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно
 			 while (s > eps);
 		}
 	} 
-	return ans;
+	return Res;
 
 }
