@@ -474,6 +474,7 @@ namespace Graph {
 		
 		if (radioButton1->Checked) {
 			this->F_2->Visible = true;
+			this->F_2->HeaderText = "F_2";
 			auto Res = RungeKutta4(f_test, xmin, xmax, y0, h, control, eps,NMax);
 			auto& ans = Res.res_vec;
 			double Max_Local_mis;
@@ -553,7 +554,9 @@ namespace Graph {
 		else if (radioButton3->Checked) {
 			auto Res=RungeKutta4SS(f2, xmin, xmax, y0, 1.0, h, control, eps, NMax);
 			auto& ans = Res.res_vec;
-			//this->F_2->Visible = true;
+			this->Global_Mistake->Visible = false;
+			this->F_2->Visible = true;
+			this->F_2->HeaderText = "Y'";
 			double Max_Local_mis;
 			if (control) {
 				this->Local_Mistake->Visible = true;
@@ -573,7 +576,7 @@ namespace Graph {
 				dataGridView1->Rows->Add();
 				dataGridView1->Rows[i]->Cells[0]->Value = ans[i].x;
 				dataGridView1->Rows[i]->Cells[1]->Value = floor(ans[i].y * 1000) / 1000;
-
+				dataGridView1->Rows[i]->Cells[2]->Value = floor(ans[i].z * 1000) / 1000;
 				i++;
 			}
 			LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red, SymbolType::None);
