@@ -497,6 +497,9 @@ namespace Graph {
 		//Только для тестовой задачи
 		PointPairList^ f2_list = gcnew ZedGraph::PointPairList();
 
+		//Только для 2 задачи
+		PointPairList^ f3_list = gcnew ZedGraph::PointPairList();
+
 		// Интервал, где есть данные
 		double xmin = Convert::ToDouble(textBox1->Text);
 		double xmax = Convert::ToDouble(textBox2->Text);
@@ -618,12 +621,18 @@ namespace Graph {
 					if (abs(Res.local_mistake_vec[j]) > Max_Local_mis) Max_Local_mis = abs(Res.local_mistake_vec[j]);
 				}
 			}
+			double ymin = ans[0].y, ymax = ans[0].y;
 			for (; i < ans.size();)
 			{
 
 				//Добавление на график
 				f1_list->Add(ans[i].x, ans[i].y);
 				f2_list->Add(ans[i].x, ans[i].z);
+				f3_list->Add(ans[i].y, ans[i].z);
+
+				if (ans[i].y > ymax) ymax = ans[i].y;
+				else if(ans[i].y < ymin) ymin = ans[i].y;
+
 
 				//Печать в таблицу
 				dataGridView1->Rows->Add();
@@ -632,8 +641,16 @@ namespace Graph {
 				dataGridView1->Rows[i]->Cells[2]->Value = floor(ans[i].z * 1000) / 1000;
 				i++;
 			}
-			LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red, SymbolType::None);
-			//LineItem Curve2 = panel->AddCurve("F2(x)", f2_list, Color::Green, SymbolType::Plus);
+			if (checkBox2->Checked) {
+				LineItem Curve1 = panel->AddCurve("Y'(Y)", f3_list, Color::Red, SymbolType::None); 
+				panel->XAxis->Scale->Min = ymin-0.1;
+				panel->XAxis->Scale->Max =ymax+0.1;
+				panel->XAxis->Title->Text = "Y";
+				panel->YAxis->Title->Text = "Y'";
+			}
+			else LineItem Curve1 = panel->AddCurve("Y(x)", f1_list, Color::Red, SymbolType::None);
+			//LineItem Curve2 = panel->AddCurve("Y'(x)", f2_list, Color::Green, SymbolType::Plus);
+
 
 			if (control) {
 				auto tmp = "Максимальная по модулю локальная погрешность =" + (Max_Local_mis)+"\nВсего удвоений шага: " + Res.ND + "\nВсего делений шага: " + Res.NH;;
@@ -644,8 +661,12 @@ namespace Graph {
 		
 
 		// Устанавливаем интересующий нас интервал по оси X
-		panel->XAxis->Scale->Min = xmin_limit;
-		panel->XAxis->Scale->Max = xmax_limit;
+		if (!checkBox2->Checked || !radioButton3->Checked) {
+			panel->XAxis->Scale->Min = xmin_limit;
+			panel->XAxis->Scale->Max = xmax_limit;
+			panel->XAxis->Title->Text = "X Axis";
+			panel->YAxis->Title->Text = "Y Axis";
+		}
 /*
 		// Устанавливаем интересующий нас интервал по оси Y
 		panel->YAxis->Scale->Min = ymin_limit;
