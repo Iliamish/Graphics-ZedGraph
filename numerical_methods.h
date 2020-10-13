@@ -28,6 +28,7 @@ double f2(double x, double y, double z, double a, double b) { // Задача 2
 struct TResults {
 	std::vector<std::pair<double, double> > res_vec;
 	std::vector<double> local_mistake_vec;
+	std::vector<double> h_vec;
 	uint64_t ND = 0;
 	uint64_t NH = 0;
 	//double max_local_mistake;
@@ -66,6 +67,7 @@ TResults RungeKutta4 //Метод РГ 4 порядка
 	ans.push_back(std::make_pair(x, y));
 	unsigned int i = 0;
 	Res.local_mistake_vec.push_back(0.0);
+	Res.h_vec.push_back(0.0);
 	for (; x < xmax-h; ) { //Если до границы осталось меньше h, то b не используется. FIXED (А надо ли?)
 		if (!control) {
 			auto tmp = RK4_new_point(f, x, y, h);
@@ -83,6 +85,7 @@ TResults RungeKutta4 //Метод РГ 4 порядка
 			else {
 				x = p1.first; y = p1.second;
 				Res.local_mistake_vec.push_back(p2.second - p1.second);
+				Res.h_vec.push_back(h);
 				if (s < (eps / 32)) {
 					h = h * 2; ++Res.ND;
 				}
@@ -111,6 +114,7 @@ TResults RungeKutta4 //Метод РГ 4 порядка
 				if (s > eps){ h = h / 2; ++Res.NH;}
 				else {
 					Res.local_mistake_vec.push_back(p2.second - p1.second);
+					Res.h_vec.push_back(h);
 					x = p1.first; y = p1.second;
 					ans.push_back(p1);
 				}
@@ -135,6 +139,7 @@ struct vec3 {
 struct TResultsSS {
 	std::vector<vec3 > res_vec;
 	std::vector<double> local_mistake_vec;
+	std::vector<double> h_vec;
 	uint64_t ND = 0;
 	uint64_t NH = 0;
 	//double max_local_mistake;
@@ -173,6 +178,7 @@ TResultsSS RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно застав
 	TResultsSS Res;
 	std::vector<vec3>& ans=Res.res_vec;
 	Res.local_mistake_vec.push_back(0.0);
+	Res.h_vec.push_back(0.0);
 	double x = xmin, y = y0, z=z0;
 	ans.push_back(vec3(x, y, z));
 	unsigned int i = 0;
@@ -192,6 +198,7 @@ TResultsSS RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно застав
 			double s = etmp / 15; // КОНТРОЛЬ ДЛЯ СИСТЕМЫ. ЧЕМУ ЖЕ РАВНО S?
 			if (s > eps) { h = h / 2; ++Res.NH; }
 			else {
+				Res.h_vec.push_back(h);
 				x = p1.x; y = p1.y; z = p1.z;
 				if (s < (eps / 32)) {
 					h = h * 2; ++Res.ND;
@@ -220,7 +227,7 @@ TResultsSS RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно застав
 			if (s > eps) { h = h / 2; ++Res.NH; }
 			else {
 				x = p1.x; y = p1.y; z = p1.z;
-				if (s < (eps / 32)) h = h * 2;
+				Res.h_vec.push_back(h);
 				ans.push_back(p1);
 			}
 			 while (s > eps);

@@ -64,13 +64,21 @@ namespace Graph {
 	private: System::Windows::Forms::RadioButton^ radioButton3;
 	private: System::Windows::Forms::TextBox^ textBox8;
 	private: System::Windows::Forms::Label^ label8;
+
+
+
+
+
+	private: System::Windows::Forms::TextBox^ textBox9;
+	private: System::Windows::Forms::Label^ label9;
+
+	private: System::Windows::Forms::CheckBox^ checkBox2;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ X;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ F_1;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ F_2;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^ H_Col;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ Local_Mistake;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ Global_Mistake;
-	private: System::Windows::Forms::TextBox^ textBox9;
-	private: System::Windows::Forms::Label^ label9;
 
 
 
@@ -95,11 +103,6 @@ namespace Graph {
 			this->zedGraphControl1 = (gcnew ZedGraph::ZedGraphControl());
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->dataGridView1 = (gcnew System::Windows::Forms::DataGridView());
-			this->X = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
-			this->F_1 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
-			this->F_2 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
-			this->Local_Mistake = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
-			this->Global_Mistake = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
@@ -122,6 +125,13 @@ namespace Graph {
 			this->label8 = (gcnew System::Windows::Forms::Label());
 			this->textBox9 = (gcnew System::Windows::Forms::TextBox());
 			this->label9 = (gcnew System::Windows::Forms::Label());
+			this->checkBox2 = (gcnew System::Windows::Forms::CheckBox());
+			this->X = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->F_1 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->F_2 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->H_Col = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->Local_Mistake = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->Global_Mistake = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -154,9 +164,9 @@ namespace Graph {
 			// dataGridView1
 			// 
 			this->dataGridView1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
-			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(5) {
+			this->dataGridView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(6) {
 				this->X, this->F_1,
-					this->F_2, this->Local_Mistake, this->Global_Mistake
+					this->F_2, this->H_Col, this->Local_Mistake, this->Global_Mistake
 			});
 			this->dataGridView1->Location = System::Drawing::Point(636, 30);
 			this->dataGridView1->Name = L"dataGridView1";
@@ -164,44 +174,6 @@ namespace Graph {
 			this->dataGridView1->RowHeadersWidth = 51;
 			this->dataGridView1->Size = System::Drawing::Size(274, 327);
 			this->dataGridView1->TabIndex = 2;
-			// 
-			// X
-			// 
-			this->X->HeaderText = L"X";
-			this->X->MinimumWidth = 6;
-			this->X->Name = L"X";
-			this->X->ReadOnly = true;
-			this->X->Width = 50;
-			// 
-			// F_1
-			// 
-			this->F_1->HeaderText = L"F_1";
-			this->F_1->MinimumWidth = 6;
-			this->F_1->Name = L"F_1";
-			this->F_1->ReadOnly = true;
-			this->F_1->Width = 125;
-			// 
-			// F_2
-			// 
-			this->F_2->HeaderText = L"F_2";
-			this->F_2->MinimumWidth = 6;
-			this->F_2->Name = L"F_2";
-			this->F_2->ReadOnly = true;
-			this->F_2->Width = 125;
-			// 
-			// Local_Mistake
-			// 
-			this->Local_Mistake->HeaderText = L"Local_Mistake";
-			this->Local_Mistake->Name = L"Local_Mistake";
-			this->Local_Mistake->ReadOnly = true;
-			this->Local_Mistake->Visible = false;
-			// 
-			// Global_Mistake
-			// 
-			this->Global_Mistake->HeaderText = L"Global_Mistake";
-			this->Global_Mistake->Name = L"Global_Mistake";
-			this->Global_Mistake->ReadOnly = true;
-			this->Global_Mistake->Visible = false;
 			// 
 			// label1
 			// 
@@ -256,7 +228,7 @@ namespace Graph {
 			// 
 			// textBox4
 			// 
-			this->textBox4->Location = System::Drawing::Point(190, 437);
+			this->textBox4->Location = System::Drawing::Point(190, 433);
 			this->textBox4->Name = L"textBox4";
 			this->textBox4->Size = System::Drawing::Size(49, 20);
 			this->textBox4->TabIndex = 13;
@@ -266,7 +238,7 @@ namespace Graph {
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(171, 440);
+			this->label4->Location = System::Drawing::Point(171, 435);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(13, 13);
 			this->label4->TabIndex = 12;
@@ -275,7 +247,7 @@ namespace Graph {
 			// 
 			// textBox5
 			// 
-			this->textBox5->Location = System::Drawing::Point(78, 436);
+			this->textBox5->Location = System::Drawing::Point(78, 434);
 			this->textBox5->Name = L"textBox5";
 			this->textBox5->Size = System::Drawing::Size(48, 20);
 			this->textBox5->TabIndex = 11;
@@ -285,7 +257,7 @@ namespace Graph {
 			// label5
 			// 
 			this->label5->AutoSize = true;
-			this->label5->Location = System::Drawing::Point(59, 438);
+			this->label5->Location = System::Drawing::Point(59, 436);
 			this->label5->Name = L"label5";
 			this->label5->Size = System::Drawing::Size(13, 13);
 			this->label5->TabIndex = 10;
@@ -376,7 +348,7 @@ namespace Graph {
 			// 
 			// textBox8
 			// 
-			this->textBox8->Location = System::Drawing::Point(591, 422);
+			this->textBox8->Location = System::Drawing::Point(591, 430);
 			this->textBox8->Name = L"textBox8";
 			this->textBox8->Size = System::Drawing::Size(86, 20);
 			this->textBox8->TabIndex = 19;
@@ -385,7 +357,7 @@ namespace Graph {
 			// label8
 			// 
 			this->label8->AutoSize = true;
-			this->label8->Location = System::Drawing::Point(553, 425);
+			this->label8->Location = System::Drawing::Point(553, 433);
 			this->label8->Name = L"label8";
 			this->label8->Size = System::Drawing::Size(35, 13);
 			this->label8->TabIndex = 18;
@@ -410,11 +382,69 @@ namespace Graph {
 			this->label9->Text = L"z0";
 			this->label9->Visible = false;
 			// 
+			// checkBox2
+			// 
+			this->checkBox2->AutoSize = true;
+			this->checkBox2->BackColor = System::Drawing::SystemColors::Control;
+			this->checkBox2->Location = System::Drawing::Point(480, 434);
+			this->checkBox2->Name = L"checkBox2";
+			this->checkBox2->Size = System::Drawing::Size(48, 17);
+			this->checkBox2->TabIndex = 22;
+			this->checkBox2->Text = L"Y\'(Y)";
+			this->checkBox2->UseVisualStyleBackColor = false;
+			this->checkBox2->Visible = false;
+			// 
+			// X
+			// 
+			this->X->HeaderText = L"X";
+			this->X->MinimumWidth = 6;
+			this->X->Name = L"X";
+			this->X->ReadOnly = true;
+			this->X->Width = 50;
+			// 
+			// F_1
+			// 
+			this->F_1->HeaderText = L"F_1";
+			this->F_1->MinimumWidth = 6;
+			this->F_1->Name = L"F_1";
+			this->F_1->ReadOnly = true;
+			this->F_1->Width = 125;
+			// 
+			// F_2
+			// 
+			this->F_2->HeaderText = L"F_2";
+			this->F_2->MinimumWidth = 6;
+			this->F_2->Name = L"F_2";
+			this->F_2->ReadOnly = true;
+			this->F_2->Width = 125;
+			// 
+			// H_Col
+			// 
+			this->H_Col->HeaderText = L"H";
+			this->H_Col->Name = L"H_Col";
+			this->H_Col->ReadOnly = true;
+			this->H_Col->Visible = false;
+			// 
+			// Local_Mistake
+			// 
+			this->Local_Mistake->HeaderText = L"Local_Mistake";
+			this->Local_Mistake->Name = L"Local_Mistake";
+			this->Local_Mistake->ReadOnly = true;
+			this->Local_Mistake->Visible = false;
+			// 
+			// Global_Mistake
+			// 
+			this->Global_Mistake->HeaderText = L"Global_Mistake";
+			this->Global_Mistake->Name = L"Global_Mistake";
+			this->Global_Mistake->ReadOnly = true;
+			this->Global_Mistake->Visible = false;
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(922, 481);
+			this->Controls->Add(this->checkBox2);
 			this->Controls->Add(this->textBox9);
 			this->Controls->Add(this->label9);
 			this->Controls->Add(this->textBox8);
@@ -488,7 +518,9 @@ namespace Graph {
 		int i = 0;
 		dataGridView1->Rows->Clear();
 		
-		
+		this->Local_Mistake->Visible = control;
+		this->H_Col->Visible = control;
+
 		if (radioButton1->Checked) {
 			this->F_2->Visible = true;
 			this->F_2->HeaderText = "F_2";
@@ -496,10 +528,10 @@ namespace Graph {
 			auto& ans = Res.res_vec;
 			double Max_Local_mis;
 			if (control) {
-				this->Local_Mistake->Visible = true;
 				Max_Local_mis = abs(Res.local_mistake_vec[0]);
 				for (size_t j = 0; j < Res.local_mistake_vec.size(); ++j) {
-					dataGridView1->Rows->Add(); dataGridView1->Rows[j]->Cells[3]->Value = Res.local_mistake_vec[j];
+					dataGridView1->Rows->Add(); dataGridView1->Rows[j]->Cells[4]->Value = Res.local_mistake_vec[j];
+					dataGridView1->Rows[j]->Cells[3]->Value = Res.h_vec[j];
 					if (abs(Res.local_mistake_vec[j]) > Max_Local_mis) Max_Local_mis = abs(Res.local_mistake_vec[j]);
 				}
 			}
@@ -519,7 +551,7 @@ namespace Graph {
 				dataGridView1->Rows[i]->Cells[2]->Value = floor(test_sol(ans[i].first, y0) * 1000) / 1000;
 
 				double mtmp = ans[i].second - test_sol(ans[i].first, y0);
-				dataGridView1->Rows[i]->Cells[4]->Value = mtmp ;
+				dataGridView1->Rows[i]->Cells[5]->Value = mtmp ;
 				MaxGlobalMistake = (MaxGlobalMistake < abs(mtmp)) ? mtmp: MaxGlobalMistake;
 				
 				i++;
@@ -541,10 +573,10 @@ namespace Graph {
 			auto Res = RungeKutta4(f1, xmin, xmax, y0, h, control, eps,NMax);
 			auto& ans = Res.res_vec;
 			if (control) {
-				this->Local_Mistake->Visible = true;
 				Max_Local_mis = abs(Res.local_mistake_vec[0]);
 				for (size_t j = 0; j < Res.local_mistake_vec.size(); ++j) { 
-					dataGridView1->Rows->Add(); dataGridView1->Rows[j]->Cells[3]->Value = Res.local_mistake_vec[j]; 
+					dataGridView1->Rows->Add(); dataGridView1->Rows[j]->Cells[4]->Value = Res.local_mistake_vec[j]; 
+					dataGridView1->Rows[j]->Cells[3]->Value = Res.h_vec[j];
 					if (abs(Res.local_mistake_vec[j]) > Max_Local_mis) Max_Local_mis = abs(Res.local_mistake_vec[j]);
 				}
 			}
@@ -579,10 +611,10 @@ namespace Graph {
 			this->F_2->HeaderText = "Y'";
 			double Max_Local_mis;
 			if (control) {
-				this->Local_Mistake->Visible = true;
 				Max_Local_mis = abs(Res.local_mistake_vec[0]);
 				for (size_t j = 0; j < Res.local_mistake_vec.size(); ++j) {
-					dataGridView1->Rows->Add(); dataGridView1->Rows[j]->Cells[3]->Value = Res.local_mistake_vec[j];
+					dataGridView1->Rows->Add(); dataGridView1->Rows[j]->Cells[4]->Value = Res.local_mistake_vec[j];
+					dataGridView1->Rows[j]->Cells[3]->Value = Res.h_vec[j];
 					if (abs(Res.local_mistake_vec[j]) > Max_Local_mis) Max_Local_mis = abs(Res.local_mistake_vec[j]);
 				}
 			}
@@ -645,6 +677,7 @@ private: System::Void radioButton3_CheckedChanged(System::Object^ sender, System
 	this->textBox4->Visible = radioButton3->Checked;
 	this->textBox5->Visible = radioButton3->Checked;
 	this->textBox9->Visible = radioButton3->Checked;
+	this->checkBox2->Visible = radioButton3->Checked;
 }
 private: System::Void radioButton2_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
 }
