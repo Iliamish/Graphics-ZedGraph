@@ -188,10 +188,10 @@ TResultsSS RungeKutta4SS //Ìåòîä ÐÃ 4 ïîðÿäêà äëÿ ÎÄÓ 2-ãî ïîðÿäêà. Ìîæíî çàñòàâ
 			auto p12 = RK4SS_new_point(U, x, y, z, h / 2,a,b);
 			auto p2 = RK4SS_new_point(U, p12.x, p12.y, p12.z, h / 2,a,b);
 			double etmp = sqrt(abs((p2.y - p1.y) * (p2.z - p1.z)));
-			Res.local_mistake_vec.push_back(etmp);
 			double s = etmp / 15; // ÊÎÍÒÐÎËÜ ÄËß ÑÈÑÒÅÌÛ. ×ÅÌÓ ÆÅ ÐÀÂÍÎ S?
 			if (s > eps) { h = h / 2; ++Res.NH; }
 			else {
+				Res.local_mistake_vec.push_back(etmp);
 				x = p1.x; y = p1.y; z = p1.z;
 				if (s < (eps / 32)) {
 					h = h * 2; ++Res.ND;
@@ -215,10 +215,11 @@ TResultsSS RungeKutta4SS //Ìåòîä ÐÃ 4 ïîðÿäêà äëÿ ÎÄÓ 2-ãî ïîðÿäêà. Ìîæíî çàñòàâ
 			auto p12 = RK4SS_new_point(U, x, y, z, h / 2, a, b);
 			auto p2 = RK4SS_new_point(U, p12.x, p12.y, p12.z, h / 2, a, b);
 			double etmp = sqrt(abs((p2.y - p1.y) * (p2.z - p1.z)));
-			Res.local_mistake_vec.push_back(etmp);
+		
 			double s = etmp / 15; // ÊÎÍÒÐÎËÜ ÄËß ÑÈÑÒÅÌÛ. ×ÅÌÓ ÆÅ ÐÀÂÍÎ S?
 			if (s > eps) { h = h / 2; ++Res.NH; }
 			else {
+				Res.local_mistake_vec.push_back(etmp);
 				x = p1.x; y = p1.y; z = p1.z;
 				if (s < (eps / 32)) h = h * 2;
 				ans.push_back(p1);
