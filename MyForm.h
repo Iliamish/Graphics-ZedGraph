@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <math.h>
 #include "numerical_methods.h"
-
+#include "numerical_methods_lab2.h"
 namespace Graph {
 
 	using namespace System;
@@ -514,7 +514,7 @@ namespace Graph {
 		// Список точек
 		int i = 0;
 		dataGridView1->Rows->Clear();
-		
+		tridiagonalMatrixAlg({ 8,6,10,6 }, { -2,-2,-4 }, { -1,2,-1 }, {6,3,8,5});
 		this->Local_Mistake->Visible = control;
 		this->H_Col->Visible = control;
 		double u0 = Convert::ToDouble(textBox9->Text);
