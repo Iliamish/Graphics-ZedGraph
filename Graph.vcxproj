@@ -145,9 +145,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Frac.cpp" />
     <ClCompile Include="MyForm.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Frac.h" />
     <ClInclude Include="MyForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>

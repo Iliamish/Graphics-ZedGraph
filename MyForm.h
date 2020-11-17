@@ -514,7 +514,8 @@ namespace Graph {
 		// Список точек
 		int i = 0;
 		dataGridView1->Rows->Clear();
-		tridiagonalMatrixAlg({ 8,6,10,6 }, { -2,-2,-4 }, { -1,2,-1 }, {6,3,8,5});
+		tfunc(0, 1, 10000, PI_4, k1Test, k2Test, q1Test, q2Test, f1Test, f2Test);
+		//tridiagonalMatrixAlg({ {7},{12},{-6},{5} }, { {-2},{4},{1} }, { {-2},{1},{3} }, { { 5},{8},{2},{4} });
 		this->Local_Mistake->Visible = control;
 		this->H_Col->Visible = control;
 		double u0 = Convert::ToDouble(textBox9->Text);
