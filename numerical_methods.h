@@ -98,6 +98,7 @@ TResultsSS RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно застав
 	double x = xmin, y = y0, v2=v20;
 	ans.push_back(vec3(x, y, v2));
 	unsigned int i = 0;
+	double border = 2 * h;
 
 	auto func1 = [](double x, double v1, double v2) {
 		return 2 - 2 * x;
@@ -107,7 +108,7 @@ TResultsSS RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно застав
 		return v1;
 	};
 
-	for (; x < xmax - h; ) { //Если до границы осталось меньше h, то b не используется. FIXED (А надо ли?)
+	for (; x + h < xmax - border; ) {
 		if (!control) {
 			auto tmp = RK4SS_new_point(func1, func2, x, y, v2, h);
 			x = tmp.x; 
@@ -120,7 +121,7 @@ TResultsSS RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно застав
 			auto p1 = RK4SS_new_point(func1, func2, x, y, v2, h);
 			auto p12 = RK4SS_new_point(func1, func2, x, y, v2, h / 2);
 			auto p2 = RK4SS_new_point(func1, func2, p12.x, p12.y, p12.v2, h / 2);
-  			double etmp = sqrt((p2.v2 - p1.v2)* (p2.v2 - p1.v2) + (p2.y - p1.y) * (p2.y - p1.y));
+			double etmp = std::max(abs(p2.v2 - p1.v2), abs(p2.y - p1.y)); //(p2.v2 - p1.v2)* (p2.v2 - p1.v2) + (p2.y - p1.y) * (p2.y - p1.y));
 			double s = etmp / 15; // КОНТРОЛЬ ДЛЯ СИСТЕМЫ. ЧЕМУ ЖЕ РАВНО S?
 			if (s > eps) { h = h / 2; ++Res.NH; }
 			else {
