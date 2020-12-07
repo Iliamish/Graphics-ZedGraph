@@ -83,6 +83,36 @@ namespace Graph {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	protected:
 	private: System::ComponentModel::IContainer^  components;
 
@@ -153,11 +183,11 @@ namespace Graph {
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(747, 393);
+			this->button1->Location = System::Drawing::Point(736, 381);
 			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(142, 45);
+			this->button1->Size = System::Drawing::Size(353, 88);
 			this->button1->TabIndex = 1;
-			this->button1->Text = L"Draw";
+			this->button1->Text = L"Вычислить";
 			this->button1->UseVisualStyleBackColor = true;
 			this->button1->Click += gcnew System::EventHandler(this, &MyForm::button1_Click);
 			// 
@@ -168,11 +198,11 @@ namespace Graph {
 				this->X, this->F_1,
 					this->F_2, this->H_Col, this->Local_Mistake, this->Global_Mistake
 			});
-			this->dataGridView1->Location = System::Drawing::Point(636, 30);
+			this->dataGridView1->Location = System::Drawing::Point(619, 30);
 			this->dataGridView1->Name = L"dataGridView1";
 			this->dataGridView1->RowHeadersVisible = false;
 			this->dataGridView1->RowHeadersWidth = 51;
-			this->dataGridView1->Size = System::Drawing::Size(274, 327);
+			this->dataGridView1->Size = System::Drawing::Size(470, 327);
 			this->dataGridView1->TabIndex = 2;
 			// 
 			// label1
@@ -404,11 +434,10 @@ namespace Graph {
 			// 
 			// F_1
 			// 
-			this->F_1->HeaderText = L"F_1";
+			this->F_1->HeaderText = L"V";
 			this->F_1->MinimumWidth = 6;
 			this->F_1->Name = L"F_1";
 			this->F_1->ReadOnly = true;
-			this->F_1->Width = 125;
 			// 
 			// F_2
 			// 
@@ -416,7 +445,6 @@ namespace Graph {
 			this->F_2->MinimumWidth = 6;
 			this->F_2->Name = L"F_2";
 			this->F_2->ReadOnly = true;
-			this->F_2->Width = 125;
 			// 
 			// H_Col
 			// 
@@ -424,26 +452,32 @@ namespace Graph {
 			this->H_Col->Name = L"H_Col";
 			this->H_Col->ReadOnly = true;
 			this->H_Col->Visible = false;
+			this->H_Col->Width = 70;
 			// 
 			// Local_Mistake
 			// 
-			this->Local_Mistake->HeaderText = L"Local_Mistake";
+			this->Local_Mistake->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::ColumnHeader;
+			this->Local_Mistake->HeaderText = L"Оценка локальной погрешности";
+			this->Local_Mistake->MinimumWidth = 50;
 			this->Local_Mistake->Name = L"Local_Mistake";
 			this->Local_Mistake->ReadOnly = true;
 			this->Local_Mistake->Visible = false;
+			this->Local_Mistake->Width = 196;
 			// 
 			// Global_Mistake
 			// 
-			this->Global_Mistake->HeaderText = L"Global_Mistake";
+			this->Global_Mistake->HeaderText = L"Глобальная погрешность";
 			this->Global_Mistake->Name = L"Global_Mistake";
 			this->Global_Mistake->ReadOnly = true;
+			this->Global_Mistake->ToolTipText = L"|U-V|";
 			this->Global_Mistake->Visible = false;
+			this->Global_Mistake->Width = 125;
 			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(922, 481);
+			this->ClientSize = System::Drawing::Size(1118, 481);
 			this->Controls->Add(this->checkBox2);
 			this->Controls->Add(this->textBox9);
 			this->Controls->Add(this->label9);
@@ -471,7 +505,7 @@ namespace Graph {
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->zedGraphControl1);
 			this->Name = L"MyForm";
-			this->Text = L"MyForm";
+			this->Text = L"Лабораторная работа 1";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
@@ -493,7 +527,7 @@ namespace Graph {
 		GraphPane^ panel = zedGraphControl1->GraphPane;
 		panel->CurveList->Clear();
 		PointPairList^ f1_list = gcnew ZedGraph::PointPairList();
-
+		panel->Title->Text = "";
 		//Только для тестовой задачи
 		PointPairList^ f2_list = gcnew ZedGraph::PointPairList();
 
@@ -526,7 +560,7 @@ namespace Graph {
 
 		if (radioButton1->Checked) {
 			this->F_2->Visible = true;
-			this->F_2->HeaderText = "F_2";
+			this->F_2->HeaderText = "U";
 			auto Res = RungeKutta4(f_test, xmin, xmax, y0, h, control, eps,NMax);
 			auto& ans = Res.res_vec;
 			double Max_Local_mis;
@@ -559,8 +593,8 @@ namespace Graph {
 				
 				i++;
 			}
-			LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red, SymbolType::None);
-			LineItem Curve2 = panel->AddCurve("F2(x)", f2_list, Color::Green, SymbolType::Plus);
+			LineItem Curve1 = panel->AddCurve("V(x)", f1_list, Color::Red, SymbolType::None);
+			LineItem Curve2 = panel->AddCurve("U(x)", f2_list, Color::Green, SymbolType::Plus);
 
 			auto tmp = "Максимальная по модулю глобальная погрешность = "+(MaxGlobalMistake)+ "\n";
 				
@@ -596,7 +630,7 @@ namespace Graph {
 
 				i++;
 			}
-			LineItem Curve1 = panel->AddCurve("F1(x)", f1_list, Color::Red, SymbolType::None);
+			LineItem Curve1 = panel->AddCurve("V(x)", f1_list, Color::Red, SymbolType::None);
 
 			if (control) { 
 				auto tmp = "Максимальная по модулю локальная погрешность =" + (Max_Local_mis)+"\nВсего удвоений шага: " + Res.ND + "\nВсего делений шага: " + Res.NH;;
@@ -642,13 +676,13 @@ namespace Graph {
 				i++;
 			}
 			if (checkBox2->Checked) {
-				LineItem Curve1 = panel->AddCurve("Y'(Y)", f3_list, Color::Red, SymbolType::None); 
+				LineItem Curve1 = panel->AddCurve("V'(V)", f3_list, Color::Red, SymbolType::None); 
 				panel->XAxis->Scale->Min = ymin-0.1;
 				panel->XAxis->Scale->Max =ymax+0.1;
-				panel->XAxis->Title->Text = "Y";
-				panel->YAxis->Title->Text = "Y'";
+				panel->XAxis->Title->Text = "V";
+				panel->YAxis->Title->Text = "V'";
 			}
-			else LineItem Curve1 = panel->AddCurve("Y(x)", f1_list, Color::Red, SymbolType::None);
+			else LineItem Curve1 = panel->AddCurve("V(x)", f1_list, Color::Red, SymbolType::None);
 			//LineItem Curve2 = panel->AddCurve("Y'(x)", f2_list, Color::Green, SymbolType::Plus);
 
 
@@ -665,7 +699,7 @@ namespace Graph {
 			panel->XAxis->Scale->Min = xmin_limit;
 			panel->XAxis->Scale->Max = xmax_limit;
 			panel->XAxis->Title->Text = "X Axis";
-			panel->YAxis->Title->Text = "Y Axis";
+			panel->YAxis->Title->Text = "V Axis";
 		}
 /*
 		// Устанавливаем интересующий нас интервал по оси Y
