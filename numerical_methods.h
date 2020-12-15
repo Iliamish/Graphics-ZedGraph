@@ -52,6 +52,7 @@ struct vec3 {
 
 struct TResultsSS {
 	std::vector<vec3 > res_vec;
+	std::vector<vec3 > res_vec_double_step;
 	std::vector<double> local_mistake_vec;
 	std::vector<double> h_vec;
 	uint64_t ND = 0;
@@ -86,29 +87,35 @@ TResultsSS RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно застав
 	double xmin, double xmax, //Начало и конец отрезка интегрирования
 	double y0, double v20, //Начальные условия, где v2
 	double h = 0.001, //Шаг интегрирования 
+	double P = 2.0,
+	double L = 1.0,
 	bool control = false, //Контроль погрешности
 	double eps = 0.000001, //Точность контроля погрешности
-	unsigned int NMax = 500 //Максимальное число итераций. Только для версии с переменным шагом.
+	unsigned int NMax = 500, //Максимальное число итераций. Только для версии с переменным шагом.
+	double right_border = 0.1
 )
 {
 	TResultsSS Res;
 	std::vector<vec3>& ans=Res.res_vec;
+	std::vector<vec3>& double_step=Res.res_vec_double_step;
 	Res.local_mistake_vec.push_back(0.0);
 	Res.h_vec.push_back(0.0);
 	double x = xmin, y = y0, v2=v20;
 	ans.push_back(vec3(x, y, v2));
+	double_step.push_back(vec3(x, y, v2));
 	unsigned int i = 0;
-	double border = 2 * h;
+	double h0 = h;
+	int steps = 0;
 
-	auto func1 = [](double x, double v1, double v2) {
-		return 2 - 2 * x;
+	auto func1 = [=](double x, double v1, double v2) {
+		return (1/L - 1/(L*L) * x) * P;
 	};
 
 	auto func2 = [](double x, double v1, double v2) {
 		return v1;
 	};
 
-	for (; x + h < xmax - border; ) {
+	for (; x + h < xmax - right_border ; ) {
 		if (!control) {
 			auto tmp = RK4SS_new_point(func1, func2, x, y, v2, h);
 			x = tmp.x; 
@@ -121,20 +128,33 @@ TResultsSS RungeKutta4SS //Метод РГ 4 порядка для ОДУ 2-го порядка. Можно застав
 			auto p1 = RK4SS_new_point(func1, func2, x, y, v2, h);
 			auto p12 = RK4SS_new_point(func1, func2, x, y, v2, h / 2);
 			auto p2 = RK4SS_new_point(func1, func2, p12.x, p12.y, p12.v2, h / 2);
-			double etmp = std::max(abs(p2.v2 - p1.v2), abs(p2.y - p1.y)); //(p2.v2 - p1.v2)* (p2.v2 - p1.v2) + (p2.y - p1.y) * (p2.y - p1.y));
+			double etmp = sqrt((p2.v2 - p1.v2)* (p2.v2 - p1.v2) + (p2.y - p1.y) * (p2.y - p1.y));
 			double s = etmp / 15; // КОНТРОЛЬ ДЛЯ СИСТЕМЫ. ЧЕМУ ЖЕ РАВНО S?
 			if (s > eps) { h = h / 2; ++Res.NH; }
 			else {
-				Res.local_mistake_vec.push_back(etmp); 
+				Res.local_mistake_vec.push_back(s * 16);
 				Res.h_vec.push_back(h);
 				x = p1.x; y = p1.y; v2 = p1.v2;
 				if (s < (eps / 32)) {
 					h = h * 2; ++Res.ND;
 				}
 				ans.push_back(p1);
+				double_step.push_back(p2);
+				++steps;
 			}
 		}
 
+	}
+
+	for (; x + h0 < xmax && steps < NMax; ) {
+		auto tmp = RK4SS_new_point(func1, func2, x, y, v2, h0);
+		x = tmp.x;
+		y = tmp.y;
+		v2 = tmp.v2;
+		ans.push_back(tmp);
+		double_step.push_back(tmp);
+		Res.h_vec.push_back(h0);
+		++steps;
 	}
 
 	return Res;
